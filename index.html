@@ -5,9 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="color-scheme" content="dark light">
 <title>Cat Benchmarks · One prompt, six AI-built 3D cats</title>
-<meta name="description" content="The same one-shot prompt given to six AI models at maximum reasoning: build a realistic interactive 3D cat in three.js. Play with every cat and compare AI credit cost, tool and build method.">
+<meta name="description" content="The same one-shot prompt given to six AI models at maximum reasoning: build a realistic interactive 3D cat in three.js. Play with every cat and see scores, AI credit cost, tool and build method.">
 <meta property="og:title" content="Cat Benchmarks – one prompt, six AI-built 3D cats">
-<meta property="og:description" content="Six models, one prompt, one realistic interactive 3D cat each. Compare them live, with credit cost and build method.">
+<meta property="og:description" content="Six models, one prompt, one realistic interactive 3D cat each. Play with them live, with scores, credit cost and build method.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://ryanbowie.github.io/cat-benchmarks/">
 <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2028%2028'%3E%3Crect%20width='28'%20height='28'%20rx='7'%20fill='%237653ae'/%3E%3Cpath%20d='M7%2021V9l5%204h4l5-4v12z'%20fill='%23fff'/%3E%3C/svg%3E">
@@ -156,11 +156,11 @@ select{font:inherit;font-size:.85rem;color:var(--text);background:var(--surface)
 [id].card{scroll-margin-top:calc(var(--header-h) + 56px)}
 .card{position:relative;display:flex;flex-direction:column;background:var(--surface);border:1px solid var(--border);border-radius:16px;overflow:hidden;box-shadow:0 0 2px rgba(0,0,0,.12),0 1px 2px rgba(0,0,0,.14);transition:transform .2s,border-color .2s,box-shadow .2s}
 .card:hover{transform:translateY(-3px);border-color:var(--border-strong);box-shadow:var(--shadow)}
-.card.picked{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent)}
 .frame{position:relative;margin:16px 24px 0;border-radius:12px;height:clamp(520px,82vh,860px);background:radial-gradient(circle at 50% 40%,#2c2438,#0d0d12);overflow:hidden}
 .frame img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 .frame iframe{position:absolute;inset:0;width:100%;height:100%;border:0;background:#000}
 .frame .play{position:absolute;inset:0;display:grid;place-items:center;border:0;cursor:pointer;background:linear-gradient(transparent 40%,rgba(0,0,0,.55));color:#fff;font:inherit}
+.frame.paused::after{content:'⏸ Paused';position:absolute;top:12px;left:12px;z-index:3;background:rgba(13,13,18,.8);color:#fff;padding:4px 12px;border-radius:999px;font-size:.8rem;font-weight:600;pointer-events:none}
 .frame .play span{display:inline-flex;align-items:center;gap:8px;background:var(--accent);color:var(--accent-fg);padding:9px 20px;border-radius:999px;font-weight:700;transition:transform .15s}
 .frame .play:hover span{transform:scale(1.07)}
 .rank{position:absolute;top:10px;left:10px;z-index:2;background:rgba(13,13,18,.78);color:#fff;border-radius:999px;padding:2px 10px;font-size:.78rem;font-weight:700;backdrop-filter:blur(6px)}
@@ -180,13 +180,6 @@ select{font:inherit;font-size:.85rem;color:var(--text);background:var(--surface)
 .actions .btn{padding:5px 14px;font-size:.82rem}
 .actions label{display:inline-flex;gap:6px;align-items:center;font-size:.82rem;color:var(--muted);margin-left:auto;cursor:pointer}
 
-/* compare */
-.compare{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:8px}
-.compare .slot{background:var(--surface);border:1px solid var(--border);border-radius:16px;overflow:hidden}
-.compare .slot .head{padding:10px 14px;font-weight:600;display:flex;justify-content:space-between;gap:8px;border-bottom:1px solid var(--border)}
-.compare .slot .body{height:clamp(420px,70vh,720px);background:#0d0d12;display:grid;place-items:center;color:#9a9ab0;text-align:center;padding:0}
-.compare iframe{width:100%;height:100%;border:0}
-@media(max-width:760px){.compare{grid-template-columns:1fr}}
 
 /* method */
 .method{display:grid;gap:18px;grid-template-columns:repeat(auto-fit,minmax(300px,1fr))}
@@ -197,14 +190,8 @@ select{font:inherit;font-size:.85rem;color:var(--text);background:var(--surface)
 .flow span{border:1px solid var(--border);background:var(--soft);padding:4px 12px;border-radius:10px}
 .flow i{font-style:normal;color:var(--muted)}
 
-/* modal */
 dialog{border:0;padding:0;background:transparent;max-width:none;max-height:none;width:100vw;height:100vh}
 dialog::backdrop{background:rgba(0,0,0,.8);backdrop-filter:blur(4px)}
-.modal{position:absolute;inset:3vh 3vw;display:flex;flex-direction:column;background:var(--surface);border:1px solid var(--border);border-radius:16px;overflow:hidden;box-shadow:var(--shadow)}
-.modal .head{display:flex;align-items:center;gap:12px;padding:10px 16px;border-bottom:1px solid var(--border)}
-.modal .head b{font-size:1.05rem}
-.modal .head .btn{margin-left:auto}
-.modal iframe{flex:1;border:0;width:100%;background:#000}
 
 footer{margin-top:56px;border-top:1px solid var(--border);padding:28px 0 48px;color:var(--muted);font-size:.9rem}
 footer .wrap{display:flex;flex-wrap:wrap;gap:12px 28px;justify-content:space-between}
@@ -221,7 +208,6 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:12px 28px;justify-content:space-bet
     <nav class="nav" aria-label="Page sections">
       <a class="pill" href="#scores">Scores</a>
       <a class="pill" href="#cats">Cats</a>
-      <a class="pill hide-sm" href="#compare">Compare</a>
       <a class="pill hide-sm" href="#cost">Credits</a>
       <a class="pill hide-sm" href="#method">Method</a>
       <a class="pill hide-sm" href="#serious">Why it matters</a>
@@ -279,21 +265,11 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:12px 28px;justify-content:space-bet
         </label>
         <span class="spacer"></span>
         <span class="mute-note">🔇 Sound muted</span>
+        <button class="btn ghost" id="pauseall">⏸ Pause all</button>
         <button class="btn ghost" id="stopall">Stop all previews</button>
       </div>
       <nav class="cat-nav" id="catnav" aria-label="Jump to a cat"></nav>
       <div class="grid" id="grid"></div>
-    </div>
-  </section>
-
-  <section id="compare">
-    <div class="wrap">
-      <h2>Head to head</h2>
-      <p class="sub">Tick <b>Compare</b> on any two cats above and they will appear side by side here.</p>
-      <div class="compare" id="cmp">
-        <div class="slot"><div class="head"><span id="cmpA">Cat A</span></div><div class="body" id="bodyA">Pick a first cat</div></div>
-        <div class="slot"><div class="head"><span id="cmpB">Cat B</span></div><div class="body" id="bodyB">Pick a second cat</div></div>
-      </div>
     </div>
   </section>
 
@@ -457,6 +433,10 @@ function muteFn(){
   const play=HTMLMediaElement.prototype.play;
   HTMLMediaElement.prototype.play=function(){this.muted=true;this.volume=0;return play.apply(this,arguments);};
   try{speechSynthesis.speak=()=>{};}catch(e){}
+  let paused=false,q=[];
+  const raf=window.requestAnimationFrame.bind(window);
+  window.requestAnimationFrame=cb=>raf(t=>{if(paused)q.push(cb);else cb(t);});
+  window.__setPaused=p=>{paused=p;if(!p){const l=q;q=[];l.forEach(cb=>raf(cb));}};
 }
 async function loadCat(iframe,c){
   const u=new URL(url(c),location.href).href;
@@ -472,7 +452,6 @@ function newFrame(c){
 }
 
 /* cards */
-const picks = [];
 let filter='all';
 function frameHTML(c){
   return `<img src="assets/${c.id}.jpg" alt="" loading="lazy" onerror="this.remove()">
@@ -492,7 +471,7 @@ function render(){
   $('#catnav').innerHTML='<ul>'+list.map(c=>`<li><a href="#cat-${c.id}">${c.name}</a></li>`).join('')+'</ul>';
   list.forEach(c=>{
     const t=TOOLS[c.tool], el=document.createElement('article');
-    el.className='card'+(picks.includes(c.id)?' picked':''); el.dataset.id=c.id; el.id='cat-'+c.id;
+    el.className='card'+''; el.dataset.id=c.id; el.id='cat-'+c.id;
     el.innerHTML=`
       <div class="chead">
         <div><h3>${c.name}</h3><div class="vendor">${c.vendor}</div></div>
@@ -503,51 +482,47 @@ function render(){
       <div class="frame">${frameHTML(c)}</div>
       <p class="how">${c.how}</p>
       <div class="actions">
+        <button class="btn" data-a="pause" disabled>⏸ Pause</button>
         <button class="btn" data-a="full">Fullscreen</button>
         <a class="btn ghost" style="text-decoration:none" href="${url(c)}" target="_blank" rel="noopener">New tab ↗ (sound on)</a>
-        <label><input type="checkbox" data-a="cmp" ${picks.includes(c.id)?'checked':''}> Compare</label>
       </div>`;
     el.querySelector('.play').onclick=()=>play(el,c);
     el.querySelector('[data-a=full]').onclick=()=>{ play(el,c); const f=el.querySelector('.frame'); (f.requestFullscreen||(()=>{})).call(f); };
-    el.querySelector('[data-a=cmp]').onchange=e=>pick(c,e.target.checked,e.target);
-    $('#grid').appendChild(el);
+    el.querySelector('[data-a=pause]').onclick=()=>{ el.dataset.manual=el.dataset.manual==='1'?'':'1'; setPaused(el,el.dataset.manual==='1'); };
+    $('#grid').appendChild(el); viewObs.observe(el);
   });
+}
+function setPaused(el,p){
+  const i=el.querySelector('.frame iframe'), b=el.querySelector('[data-a=pause]');
+  try{ i&&i.contentWindow.__setPaused&&i.contentWindow.__setPaused(p); }catch(e){}
+  el.dataset.paused=p?'1':''; el.querySelector('.frame').classList.toggle('paused',p);
+  b.textContent=p?'▶ Resume':'⏸ Pause';
 }
 function reset(el){
   const c=CATS.find(x=>x.id===el.dataset.id), f=el.querySelector('.frame');
+  el.dataset.manual=''; setPaused(el,false);
   f.innerHTML=frameHTML(c); f.querySelector('.play').onclick=()=>play(el,c);
+  el.querySelector('[data-a=pause]').disabled=true;
 }
+/* auto-pause cats that scroll out of view to spare the GPU */
+const viewObs=new IntersectionObserver(es=>es.forEach(e=>{
+  const el=e.target;
+  if(!el.querySelector('.frame iframe')||el.dataset.manual==='1') return;
+  setPaused(el,!e.isIntersecting);
+}),{threshold:.15});
 function play(el,c){
   const f=el.querySelector('.frame'); if(f.querySelector('iframe')) return;
   document.querySelectorAll('.card').forEach(o=>{ if(o!==el&&o.querySelector('.frame iframe')) reset(o); });
   f.innerHTML=''; f.appendChild(newFrame(c));
+  el.querySelector('[data-a=pause]').disabled=false;
 }
+$('#pauseall').onclick=()=>document.querySelectorAll('.card').forEach(o=>{ if(o.querySelector('.frame iframe')){ o.dataset.manual='1'; setPaused(o,true); } });
 $('#stopall').onclick=()=>document.querySelectorAll('.card').forEach(o=>{ if(o.querySelector('.frame iframe')) reset(o); });
 document.querySelectorAll('#filter button').forEach(b=>b.onclick=()=>{
   filter=b.dataset.f; document.querySelectorAll('#filter button').forEach(x=>x.setAttribute('aria-pressed',x===b)); render();});
 $('#sort').onchange=render;
 
 /* stage modal removed: each cat now has a full-size panel */
-
-/* compare */
-function pick(c,on,box){
-  const i=picks.indexOf(c.id);
-  if(on&&i<0){ if(picks.length===2){ picks.shift(); } picks.push(c.id); }
-  if(!on&&i>=0) picks.splice(i,1);
-  document.querySelectorAll('.card').forEach(el=>{
-    const p=picks.includes(el.dataset.id); el.classList.toggle('picked',p); el.querySelector('[data-a=cmp]').checked=p;});
-  drawCompare();
-}
-function drawCompare(){
-  [['A',0],['B',1]].forEach(([k,i])=>{
-    const c=CATS.find(x=>x.id===picks[i]); const body=$('#body'+k), head=$('#cmp'+k);
-    if(!c){head.textContent='Cat '+k; body.innerHTML=`Pick a ${i?'second':'first'} cat`; return;}
-    head.innerHTML=`${c.name} <span class="muted small">· ${TOOLS[c.tool].label} · ${c.credits==null?'credits n/a':fmt(c.credits)+' credits'}</span>`;
-    if(body.dataset.id!==c.id){body.dataset.id=c.id; body.innerHTML=''; body.appendChild(newFrame(c));}
-  });
-  [['A',0],['B',1]].forEach(([k,i])=>{ if(!picks[i]) $('#body'+k).dataset.id=''; });
-  if(picks.length===2) $('#compare').scrollIntoView({behavior:'smooth'});
-}
 
 /* theme */
 $('#theme').onclick=()=>{
