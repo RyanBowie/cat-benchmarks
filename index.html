@@ -224,6 +224,7 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:12px 28px;justify-content:space-bet
       <a class="pill hide-sm" href="#compare">Compare</a>
       <a class="pill hide-sm" href="#cost">Credits</a>
       <a class="pill hide-sm" href="#method">Method</a>
+      <a class="pill hide-sm" href="#serious">Why it matters</a>
       <a class="pill" href="https://github.com/RyanBowie/cat-benchmarks" target="_blank" rel="noopener">GitHub ↗</a>
       <button class="icon-btn" id="theme" aria-label="Toggle light / dark theme" title="Toggle theme">◐</button>
     </nav>
@@ -330,6 +331,21 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:12px 28px;justify-content:space-bet
           </ul>
         </div>
       </div>
+    </div>
+  </section>
+  <section id="serious">
+    <div class="wrap">
+      <h2>Seriously though: what does this actually benchmark?</h2>
+      <p class="sub">It is all fun and games, and a cool way to compare models, but there is a real signal underneath. A single open-ended prompt with no files and no hand-holding is a surprisingly demanding test.</p>
+      <div class="method">
+        <div class="panel"><h3>Code and 3D reasoning</h3><p class="muted">The model has to turn "realistic cat" into geometry, proportions, materials, lighting and a camera, using three.js from memory. Weak spatial reasoning shows up instantly as a cat that looks wrong.</p></div>
+        <div class="panel"><h3>Planning a big build from one sentence</h3><p class="muted">Nothing specifies features, layout or style. The model must decide scope, structure the code and finish a working app without a spec or any follow-up questions.</p></div>
+        <div class="panel"><h3>Library and API knowledge</h3><p class="muted">Using the right three.js APIs for the version (shaders, skinning, instancing, controls) without docs, and not hallucinating methods that break the page.</p></div>
+        <div class="panel"><h3>Making it run first time</h3><p class="muted">With no human to debug, the page has to load and run without errors. How well a model checks its own work, and whether it bundles or iterates, matters here.</p></div>
+        <div class="panel"><h3>Taste and product sense</h3><p class="muted">Interaction design, UI polish, animation and small details are judgement calls. Models differ a lot in how much they care about the experience, not just the code.</p></div>
+        <div class="panel"><h3>Effort versus outcome</h3><p class="muted">Credits spent and build approach are context, not the verdict: more effort does not always buy a better cat, and the Copilot versus Cowork harness changes what a model can do.</p></div>
+      </div>
+      <p class="note"><b>Caveats.</b> One prompt, one run per model, scored by one reviewer, so luck and taste play a big part. It says little about debugging existing code, long-horizon work or correctness on production tasks. Treat it as a vibe-check on open-ended creative coding, not a leaderboard of overall model quality.</p>
     </div>
   </section>
 </main>
