@@ -5,9 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="color-scheme" content="dark light">
 <title>Cat Benchmarks · One prompt, six AI-built 3D cats</title>
-<meta name="description" content="The same one-shot prompt given to six AI models at maximum reasoning: build a realistic interactive 3D cat in three.js. Play with every cat and see scores, AI credit cost, tool and build method.">
+<meta name="description" content="The same one-shot prompt given to six AI models at maximum reasoning: build a realistic interactive 3D cat in three.js. Watch every cat in action and see scores, AI credit cost, tool and build method.">
 <meta property="og:title" content="Cat Benchmarks – one prompt, six AI-built 3D cats">
-<meta property="og:description" content="Six models, one prompt, one realistic interactive 3D cat each. Play with them live, with scores, credit cost and build method.">
+<meta property="og:description" content="Six models, one prompt, one realistic interactive 3D cat each. Watch them in action, with scores, credit cost and build method.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://ryanbowie.github.io/cat-benchmarks/">
 <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2028%2028'%3E%3Crect%20width='28'%20height='28'%20rx='7'%20fill='%237653ae'/%3E%3Cpath%20d='M7%2021V9l5%204h4l5-4v12z'%20fill='%23fff'/%3E%3C/svg%3E">
@@ -152,17 +152,12 @@ select{font:inherit;font-size:.85rem;color:var(--text);background:var(--surface)
 .cat-nav ul{display:flex;gap:8px;list-style:none;margin:0 auto;padding:8px 20px;width:max-content;max-width:none}
 .cat-nav a{display:inline-block;padding:4px 12px;border:1px solid var(--border);border-radius:999px;background:var(--surface);color:var(--text);text-decoration:none;font-size:.85rem;white-space:nowrap}
 .cat-nav a:hover{border-color:var(--accent)}
-.mute-note{display:inline-flex;gap:6px;align-items:center;font-size:.85rem;color:var(--muted)}
 [id].card{scroll-margin-top:calc(var(--header-h) + 56px)}
 .card{position:relative;display:flex;flex-direction:column;background:var(--surface);border:1px solid var(--border);border-radius:16px;overflow:hidden;box-shadow:0 0 2px rgba(0,0,0,.12),0 1px 2px rgba(0,0,0,.14);transition:transform .2s,border-color .2s,box-shadow .2s}
 .card:hover{transform:translateY(-3px);border-color:var(--border-strong);box-shadow:var(--shadow)}
-.frame{position:relative;margin:16px 24px 0;border-radius:12px;height:clamp(520px,82vh,860px);background:radial-gradient(circle at 50% 40%,#2c2438,#0d0d12);overflow:hidden}
-.frame img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
-.frame iframe{position:absolute;inset:0;width:100%;height:100%;border:0;background:#000}
-.frame .play{position:absolute;inset:0;display:grid;place-items:center;border:0;cursor:pointer;background:linear-gradient(transparent 40%,rgba(0,0,0,.55));color:#fff;font:inherit}
-.frame.paused::after{content:'⏸ Paused';position:absolute;top:12px;left:12px;z-index:3;background:rgba(13,13,18,.8);color:#fff;padding:4px 12px;border-radius:999px;font-size:.8rem;font-weight:600;pointer-events:none}
-.frame .play span{display:inline-flex;align-items:center;gap:8px;background:var(--accent);color:var(--accent-fg);padding:9px 20px;border-radius:999px;font-weight:700;transition:transform .15s}
-.frame .play:hover span{transform:scale(1.07)}
+.frame{position:relative;margin:16px 24px 0;border-radius:12px;aspect-ratio:16/9;background:#0d0d12;overflow:hidden}
+.frame video,.frame img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.frame .tag-rec{position:absolute;top:10px;left:10px;z-index:2;background:rgba(13,13,18,.78);color:#fff;border-radius:999px;padding:2px 10px;font-size:.75rem;font-weight:600}
 .rank{position:absolute;top:10px;left:10px;z-index:2;background:rgba(13,13,18,.78);color:#fff;border-radius:999px;padding:2px 10px;font-size:.78rem;font-weight:700;backdrop-filter:blur(6px)}
 .badge-fun{position:absolute;top:10px;right:10px;z-index:2;background:var(--accent);color:var(--accent-fg);border-radius:999px;padding:2px 10px;font-size:.78rem;font-weight:700}
 .meta{padding:16px 18px 18px;display:flex;flex-direction:column;gap:10px;flex:1}
@@ -247,7 +242,7 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:12px 28px;justify-content:space-bet
   <section id="cats">
     <div class="wrap">
       <h2>Meet the cats</h2>
-      <p class="sub">Each cat has its own large panel: scroll down the page and hit <b>Play</b> to wake one up. Only one runs at a time to spare your GPU, and all sound is muted.</p>
+      <p class="sub">Each cat has a 10-second clip recorded from its own page. Hit <b>Launch the live cat</b> to play with the real thing in a new tab (the HTML is in the repo, with sound). Six live WebGL scenes at once would melt most machines, so clips it is.</p>
       <div class="toolbar">
         <div class="seg" role="group" aria-label="Filter by build tool" id="filter">
           <button aria-pressed="true" data-f="all">All</button>
@@ -264,9 +259,6 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:12px 28px;justify-content:space-bet
           </select>
         </label>
         <span class="spacer"></span>
-        <span class="mute-note">🔇 Sound muted</span>
-        <button class="btn ghost" id="pauseall">⏸ Pause all</button>
-        <button class="btn ghost" id="stopall">Stop all previews</button>
       </div>
       <nav class="cat-nav" id="catnav" aria-label="Jump to a cat"></nav>
       <div class="grid" id="grid"></div>
@@ -419,43 +411,10 @@ $('#chart').innerHTML = sorted.map(c=>`
   + `<div class="legend">${Object.values(TOOLS).map(t=>`<span><i class="dot" style="background:${t.c}"></i>${t.label}</span>`).join('')}</div>`;
 new IntersectionObserver((es,o)=>es.forEach(e=>{if(e.isIntersecting){e.target.querySelectorAll('.fill').forEach(f=>f.style.width=f.dataset.w+'%');o.unobserve(e.target)}}),{threshold:.2}).observe($('#chart'));
 
-/* muting: injected ahead of each cat's own scripts */
-function muteFn(){
-  const orig=AudioNode.prototype.connect, sinks=new WeakMap();
-  AudioNode.prototype.connect=function(d,...a){
-    if(window.AudioDestinationNode&&d instanceof AudioDestinationNode){
-      let g=sinks.get(d.context);
-      if(!g){g=d.context.createGain();g.gain.value=0;orig.call(g,d);sinks.set(d.context,g);}
-      return orig.call(this,g,...a);
-    }
-    return orig.call(this,d,...a);
-  };
-  const play=HTMLMediaElement.prototype.play;
-  HTMLMediaElement.prototype.play=function(){this.muted=true;this.volume=0;return play.apply(this,arguments);};
-  try{speechSynthesis.speak=()=>{};}catch(e){}
-  let paused=false,q=[];
-  const raf=window.requestAnimationFrame.bind(window);
-  window.requestAnimationFrame=cb=>raf(t=>{if(paused)q.push(cb);else cb(t);});
-  window.__setPaused=p=>{paused=p;if(!p){const l=q;q=[];l.forEach(cb=>raf(cb));}};
-}
-async function loadCat(iframe,c){
-  const u=new URL(url(c),location.href).href;
-  try{
-    const t=await (await fetch(u)).text();
-    const inj=`<base href="${u}"><script>(${muteFn})()<\/script>`;
-    iframe.srcdoc=/<head[^>]*>/i.test(t)?t.replace(/<head[^>]*>/i,m=>m+inj):inj+t;
-  }catch(e){iframe.src=u;}
-}
-function newFrame(c){
-  const i=document.createElement('iframe'); i.title=c.name; i.allow='fullscreen';
-  loadCat(i,c); return i;
-}
-
 /* cards */
 let filter='all';
 function frameHTML(c){
-  return `<img src="assets/${c.id}.jpg" alt="" loading="lazy" onerror="this.remove()">
-    <button class="play" aria-label="Play ${c.name}"><span>▶ Play ${c.name}</span></button>`;
+  return `<video muted loop playsinline preload="none" poster="assets/${c.id}.jpg" data-src="videos/${c.id}.mp4" aria-label="10 second clip of ${c.name}"></video><span class="tag-rec">10 s clip</span>`;
 }
 function render(){
   const s=$('#sort').value;
@@ -482,42 +441,17 @@ function render(){
       <div class="frame">${frameHTML(c)}</div>
       <p class="how">${c.how}</p>
       <div class="actions">
-        <button class="btn" data-a="pause" disabled>⏸ Pause</button>
-        <button class="btn" data-a="full">Fullscreen</button>
-        <a class="btn ghost" style="text-decoration:none" href="${url(c)}" target="_blank" rel="noopener">New tab ↗ (sound on)</a>
+        <a class="btn" style="text-decoration:none" href="${url(c)}" target="_blank" rel="noopener">Launch the live cat ↗</a>
+        <a class="btn ghost" style="text-decoration:none" href="https://github.com/RyanBowie/cat-benchmarks/blob/main/${url(c)}" target="_blank" rel="noopener">View source</a>
       </div>`;
-    el.querySelector('.play').onclick=()=>play(el,c);
-    el.querySelector('[data-a=full]').onclick=()=>{ play(el,c); const f=el.querySelector('.frame'); (f.requestFullscreen||(()=>{})).call(f); };
-    el.querySelector('[data-a=pause]').onclick=()=>{ el.dataset.manual=el.dataset.manual==='1'?'':'1'; setPaused(el,el.dataset.manual==='1'); };
-    $('#grid').appendChild(el); viewObs.observe(el);
+    $('#grid').appendChild(el); vidObs.observe(el.querySelector('video'));
   });
 }
-function setPaused(el,p){
-  const i=el.querySelector('.frame iframe'), b=el.querySelector('[data-a=pause]');
-  try{ i&&i.contentWindow.__setPaused&&i.contentWindow.__setPaused(p); }catch(e){}
-  el.dataset.paused=p?'1':''; el.querySelector('.frame').classList.toggle('paused',p);
-  b.textContent=p?'▶ Resume':'⏸ Pause';
-}
-function reset(el){
-  const c=CATS.find(x=>x.id===el.dataset.id), f=el.querySelector('.frame');
-  el.dataset.manual=''; setPaused(el,false);
-  f.innerHTML=frameHTML(c); f.querySelector('.play').onclick=()=>play(el,c);
-  el.querySelector('[data-a=pause]').disabled=true;
-}
-/* auto-pause cats that scroll out of view to spare the GPU */
-const viewObs=new IntersectionObserver(es=>es.forEach(e=>{
-  const el=e.target;
-  if(!el.querySelector('.frame iframe')||el.dataset.manual==='1') return;
-  setPaused(el,!e.isIntersecting);
-}),{threshold:.15});
-function play(el,c){
-  const f=el.querySelector('.frame'); if(f.querySelector('iframe')) return;
-  document.querySelectorAll('.card').forEach(o=>{ if(o!==el&&o.querySelector('.frame iframe')) reset(o); });
-  f.innerHTML=''; f.appendChild(newFrame(c));
-  el.querySelector('[data-a=pause]').disabled=false;
-}
-$('#pauseall').onclick=()=>document.querySelectorAll('.card').forEach(o=>{ if(o.querySelector('.frame iframe')){ o.dataset.manual='1'; setPaused(o,true); } });
-$('#stopall').onclick=()=>document.querySelectorAll('.card').forEach(o=>{ if(o.querySelector('.frame iframe')) reset(o); });
+/* load clips only when near the viewport, play only while visible */
+const vidObs=new IntersectionObserver(es=>es.forEach(e=>{
+  const v=e.target;
+  if(e.isIntersecting){ if(!v.src) v.src=v.dataset.src; v.play().catch(()=>{}); } else v.pause();
+}),{threshold:.25,rootMargin:'200px'});
 document.querySelectorAll('#filter button').forEach(b=>b.onclick=()=>{
   filter=b.dataset.f; document.querySelectorAll('#filter button').forEach(x=>x.setAttribute('aria-pressed',x===b)); render();});
 $('#sort').onchange=render;

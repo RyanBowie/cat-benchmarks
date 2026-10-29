@@ -15,6 +15,6 @@ An informal, fun benchmark: the same one-shot prompt given to several AI models 
 
 Scores are a weighted 0–10 average of seven criteria: anatomy 25%, fur 15%, animation 15%, interactivity 15%, face 10%, scene 10%, performance 10%. They are first-pass and editable in the `SCORES` table in `index.html`.
 
-Each result lives in `cats/<model>/index.html`. The showcase is `index.html`, served with GitHub Pages.
+Each result lives in `cats/<model>/index.html`, with a 10 second preview clip in `videos/<model>.mp4`. The showcase is `index.html`, served with GitHub Pages.
 
 Results are unedited model output (single files, or bundled builds of the model's project). Some load three.js from a CDN.
