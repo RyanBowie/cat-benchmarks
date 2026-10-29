@@ -113,12 +113,51 @@ select{font:inherit;font-size:.85rem;color:var(--text);background:var(--surface)
 .dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px;vertical-align:0}
 @media(max-width:560px){.bar-row{grid-template-columns:100px 1fr 64px}}
 
+/* scoring */
+.lb{display:grid;gap:10px}
+.lb-row{display:grid;grid-template-columns:44px minmax(150px,1.1fr) 3fr 72px;gap:14px;align-items:center;background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:12px 16px;text-decoration:none;color:var(--text)}
+.lb-row:hover{border-color:var(--accent)}
+.lb-rank{font-weight:800;font-size:1.3rem;color:var(--accent);text-align:center}
+.lb-name b{display:block}.lb-name span{font-size:.8rem;color:var(--muted)}
+.lb-bar{height:14px;background:var(--soft);border-radius:999px;overflow:hidden}
+.lb-bar i{display:block;height:100%;width:0;border-radius:999px;background:linear-gradient(90deg,color-mix(in srgb,var(--c) 55%,transparent),var(--c));transition:width 1s cubic-bezier(.2,.8,.2,1)}
+.lb-score{font-weight:800;font-size:1.35rem;text-align:right;font-variant-numeric:tabular-nums}
+.heat-wrap{overflow-x:auto;margin-top:22px;border:1px solid var(--border);border-radius:14px;background:var(--surface)}
+.heat{border-collapse:collapse;width:100%;min-width:760px;font-size:.88rem}
+.heat th,.heat td{padding:9px 10px;text-align:center;border-bottom:1px solid var(--border)}
+.heat th{font-weight:600;color:var(--muted);font-size:.78rem;vertical-align:bottom}
+.heat th small{display:block;font-weight:400;opacity:.8}
+.heat td:first-child,.heat th:first-child{text-align:left;font-weight:600;white-space:nowrap}
+.heat td.v{font-variant-numeric:tabular-nums;background:color-mix(in srgb,var(--accent) calc(var(--p)*1%),transparent)}
+.heat tr:last-child td{border-bottom:0}
+.rubric{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));margin-top:22px}
+.rubric .r{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:14px 16px}
+.rubric .r b{display:flex;justify-content:space-between;gap:8px}
+.rubric .r b em{font-style:normal;color:var(--accent)}
+.rubric .r p{margin:6px 0 0;font-size:.84rem;color:var(--muted)}
+.scale{display:flex;flex-wrap:wrap;gap:8px 18px;font-size:.84rem;color:var(--muted);margin-top:18px}
+.scorepill{display:inline-flex;align-items:baseline;gap:4px;font-weight:800;color:var(--accent)}
+.scorepill small{font-weight:500;color:var(--muted)}
+.note{font-size:.84rem;color:var(--muted);margin-top:14px;border-left:3px solid var(--accent);padding-left:12px}
+@media(max-width:700px){.lb-row{grid-template-columns:32px 1fr 60px}.lb-bar{grid-column:1/-1;order:5}}
+
 /* cat cards */
-.grid{display:grid;gap:22px;grid-template-columns:repeat(auto-fill,minmax(340px,1fr))}
+.grid{display:grid;gap:40px}
+.chead{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:12px 24px;padding:20px 24px 0}
+.chead .credits{text-align:right}
+.card .tags{padding:12px 24px 0}
+.card .how{padding:14px 24px 0;font-size:.95rem}
+.card .actions{padding:16px 24px 22px}
+.cat-nav{position:sticky;top:var(--header-h);z-index:40;background:var(--panel);backdrop-filter:blur(10px);border-bottom:1px solid var(--border);overflow-x:auto}
+.cat-nav ul{display:flex;gap:8px;list-style:none;margin:0 auto;padding:8px 20px;width:max-content;max-width:none}
+.cat-nav a{display:inline-block;padding:4px 12px;border:1px solid var(--border);border-radius:999px;background:var(--surface);color:var(--text);text-decoration:none;font-size:.85rem;white-space:nowrap}
+.cat-nav a:hover{border-color:var(--accent)}
+.mute-note{display:inline-flex;gap:6px;align-items:center;font-size:.85rem;color:var(--muted)}
+[id].card{scroll-margin-top:calc(var(--header-h) + 56px)}
 .card{position:relative;display:flex;flex-direction:column;background:var(--surface);border:1px solid var(--border);border-radius:16px;overflow:hidden;box-shadow:0 0 2px rgba(0,0,0,.12),0 1px 2px rgba(0,0,0,.14);transition:transform .2s,border-color .2s,box-shadow .2s}
 .card:hover{transform:translateY(-3px);border-color:var(--border-strong);box-shadow:var(--shadow)}
 .card.picked{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent)}
-.frame{position:relative;aspect-ratio:4/3;background:radial-gradient(circle at 50% 40%,#2c2438,#0d0d12);overflow:hidden}
+.frame{position:relative;margin:16px 24px 0;border-radius:12px;height:clamp(520px,82vh,860px);background:radial-gradient(circle at 50% 40%,#2c2438,#0d0d12);overflow:hidden}
 .frame img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 .frame iframe{position:absolute;inset:0;width:100%;height:100%;border:0;background:#000}
 .frame .play{position:absolute;inset:0;display:grid;place-items:center;border:0;cursor:pointer;background:linear-gradient(transparent 40%,rgba(0,0,0,.55));color:#fff;font:inherit}
@@ -145,7 +184,7 @@ select{font:inherit;font-size:.85rem;color:var(--text);background:var(--surface)
 .compare{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:8px}
 .compare .slot{background:var(--surface);border:1px solid var(--border);border-radius:16px;overflow:hidden}
 .compare .slot .head{padding:10px 14px;font-weight:600;display:flex;justify-content:space-between;gap:8px;border-bottom:1px solid var(--border)}
-.compare .slot .body{aspect-ratio:4/3;background:#0d0d12;display:grid;place-items:center;color:#9a9ab0;text-align:center;padding:20px}
+.compare .slot .body{height:clamp(420px,70vh,720px);background:#0d0d12;display:grid;place-items:center;color:#9a9ab0;text-align:center;padding:0}
 .compare iframe{width:100%;height:100%;border:0}
 @media(max-width:760px){.compare{grid-template-columns:1fr}}
 
@@ -180,9 +219,10 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:12px 28px;justify-content:space-bet
       <span>Cat Benchmarks</span>
     </a>
     <nav class="nav" aria-label="Page sections">
-      <a class="pill hide-sm" href="#cost">Credits</a>
+      <a class="pill" href="#scores">Scores</a>
       <a class="pill" href="#cats">Cats</a>
       <a class="pill hide-sm" href="#compare">Compare</a>
+      <a class="pill hide-sm" href="#cost">Credits</a>
       <a class="pill hide-sm" href="#method">Method</a>
       <a class="pill" href="https://github.com/RyanBowie/cat-benchmarks" target="_blank" rel="noopener">GitHub ↗</a>
       <button class="icon-btn" id="theme" aria-label="Toggle light / dark theme" title="Toggle theme">◐</button>
@@ -195,7 +235,7 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:12px 28px;justify-content:space-bet
     <div class="wrap">
       <span class="eyebrow">A bit of fun · single-prompt benchmark</span>
       <h1>One prompt. Seven models. <span>Seven cats.</span></h1>
-      <p class="lead">Every model got the exact same instruction at its highest reasoning setting, with no local files and no previous context. Pet them, poke them, and see what each one cost to build.</p>
+      <p class="lead">Every model got the exact same instruction at its highest reasoning setting, with no local files and no previous context. Pet them, poke them, and see how they score.</p>
       <div class="terminal" role="img" aria-label="The prompt given to every model">
         <div class="bar"><i></i><i></i><i></i><b>prompt.txt</b></div>
         <pre><span class="ps">&gt;</span> <span id="typed"></span><span class="caret"></span></pre>
@@ -204,18 +244,23 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:12px 28px;justify-content:space-bet
     </div>
   </div>
 
-  <section id="cost">
+  <section id="scores">
     <div class="wrap">
-      <h2>What each cat cost</h2>
-      <p class="sub">AI credits consumed by the session that produced the cat. Lower is cheaper, not necessarily better, so judge the cats yourself below.</p>
-      <div class="chart" id="chart"></div>
+      <h2>The scoreboard</h2>
+      <p class="sub">Each cat is scored 0–10 across eight weighted criteria. Nothing has earned a 10: that would be a cat you could mistake for a live one on a screen. Click a row to jump to that cat.</p>
+      <div class="lb" id="lb"></div>
+      <div class="heat-wrap"><table class="heat" id="heat"></table></div>
+      <div class="scale"><span><b>0–2</b> missing or broken</span><span><b>3–4</b> crude</span><span><b>5–6</b> recognisably a cat</span><span><b>7–8</b> convincing</span><span><b>9–10</b> near-photoreal / flawless</span></div>
+      <h3 style="margin:30px 0 0">The matrix</h3>
+      <div class="rubric" id="rubric"></div>
+      <p class="note"><b>Provisional scores.</b> First-pass judgement from each cat's poster render and feature set (controls, behaviours, audio features), by one reviewer, one run per model. Edit the <code>SCORES</code> table in <code>index.html</code> to change them and everything recalculates.</p>
     </div>
   </section>
 
   <section id="cats">
     <div class="wrap">
       <h2>Meet the cats</h2>
-      <p class="sub">Previews are loaded on demand because each cat is a full WebGL scene. Hit <b>Play</b> to wake one up, or open it on the big stage.</p>
+      <p class="sub">Each cat has its own large panel: scroll down the page and hit <b>Play</b> to wake one up. Only one runs at a time to spare your GPU, and all sound is muted.</p>
       <div class="toolbar">
         <div class="seg" role="group" aria-label="Filter by build tool" id="filter">
           <button aria-pressed="true" data-f="all">All</button>
@@ -224,6 +269,7 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:12px 28px;justify-content:space-bet
         </div>
         <label>Sort
           <select id="sort">
+            <option value="score">Highest score first</option>
             <option value="credits-desc">Most credits first</option>
             <option value="credits-asc">Fewest credits first</option>
             <option value="name">Model name</option>
@@ -231,8 +277,10 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:12px 28px;justify-content:space-bet
           </select>
         </label>
         <span class="spacer"></span>
+        <span class="mute-note">🔇 Sound muted</span>
         <button class="btn ghost" id="stopall">Stop all previews</button>
       </div>
+      <nav class="cat-nav" id="catnav" aria-label="Jump to a cat"></nav>
       <div class="grid" id="grid"></div>
     </div>
   </section>
@@ -245,6 +293,14 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:12px 28px;justify-content:space-bet
         <div class="slot"><div class="head"><span id="cmpA">Cat A</span></div><div class="body" id="bodyA">Pick a first cat</div></div>
         <div class="slot"><div class="head"><span id="cmpB">Cat B</span></div><div class="body" id="bodyB">Pick a second cat</div></div>
       </div>
+    </div>
+  </section>
+
+  <section id="cost">
+    <div class="wrap">
+      <h2>Credits spent</h2>
+      <p class="sub">For context only: AI credits consumed by the session that produced each cat. The results differ too much for cost to be the headline, so scores above are what matter.</p>
+      <div class="chart" id="chart"></div>
     </div>
   </section>
 
@@ -285,12 +341,6 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:12px 28px;justify-content:space-bet
   </div>
 </footer>
 
-<dialog id="stage">
-  <div class="modal">
-    <div class="head"><b id="stageTitle"></b><span class="tag" id="stageTag"></span><button class="btn ghost" id="stageClose">Close ✕</button></div>
-    <iframe id="stageFrame" title="Cat stage" allow="fullscreen; autoplay"></iframe>
-  </div>
-</dialog>
 
 <script>
 const PROMPT = "Using no folder/local file context or previous session context Create a new realistic interactive 3d cat with three.js from scratch.";
@@ -307,7 +357,7 @@ const CATS = [
   { id:'gpt-5.6-sol',       name:'GPT-5.6 Sol',       vendor:'OpenAI',    tool:'copilot', credits:201,  kb:50,  build:'Single HTML file', three:'three r170 · CDN',
     how:'The leanest page of the lot, with Miso the cat in about 50 KB.' },
   { id:'gpt-6.1-sol',       name:'GPT-6.1 Sol',       vendor:'OpenAI',    tool:'copilot', credits:179,  kb:622, build:'Vite project → bundled', three:'three · bundled',
-    how:'Cheapest cat. Built as a Vite project (cat, audio, UI modules) and bundled into one file named Miso.' },
+    how:'Built as a Vite project (cat, audio, UI modules) and bundled into one file named Miso.' },
   { id:'mai-code-2-flash',  name:'MAI-Code-2-Flash',  vendor:'Microsoft', tool:'copilot', credits:null, kb:613, build:'esbuild project → bundled', three:'three · bundled',
     how:'A small esbuild project that bundles a 38 KB source into a single page. Credit cost was not reported.' }
 ];
@@ -320,6 +370,43 @@ const fmt = n => n==null ? 'n/a' : n.toLocaleString('en-GB');
 const paws = c => c.credits==null ? '❔' : '🐾'.repeat(Math.max(1,Math.round(c.credits/450)));
 const cheap = known.reduce((a,c)=>c.credits<a.credits?c:a), dear = known.reduce((a,c)=>c.credits>a.credits?c:a);
 
+/* scoring matrix: weights sum to 100 */
+const CRITERIA = [
+  {k:'anatomy', n:'Anatomy & proportions', w:20, d:'Believable body, head, limbs, tail and posture. Reads as a real cat from every orbit angle.'},
+  {k:'fur',     n:'Fur & materials',       w:15, d:'Coat patterns, fur or fuzz, shading and lighting on skin, nose, ears and whiskers.'},
+  {k:'face',    n:'Face & eyes',           w:10, d:'Expressive eyes with slit pupils and a convincing nose, mouth and whiskers.'},
+  {k:'anim',    n:'Animation & behaviour', w:15, d:'Idle breathing, blinking, tail and ear motion, poses, and reactions that feel alive.'},
+  {k:'inter',   n:'Interactivity',         w:15, d:'Petting, toys, camera control and depth of things to do, all working smoothly.'},
+  {k:'scene',   n:'Scene & polish',        w:10, d:'Lighting, environment, UI design, layout and overall finish.'},
+  {k:'perf',    n:'Performance & robustness', w:10, d:'Smooth frame rate, quick load, no errors, works across window sizes.'},
+  {k:'audio',   n:'Audio & delight',       w:5,  d:'Procedural purr or meow, charm and the small touches that make you smile.'}
+];
+const SCORES = {
+  'claude-opus-5.5':   {anatomy:7.8, fur:8.6, face:7.6, anim:7.8, inter:8.4, scene:8.0, perf:7.2, audio:8.0},
+  'claude-sonnet-5.5': {anatomy:8.0, fur:7.8, face:8.0, anim:7.6, inter:8.0, scene:8.2, perf:7.5, audio:7.0},
+  'grok-4.7':          {anatomy:4.5, fur:3.5, face:5.0, anim:5.5, inter:6.5, scene:5.5, perf:8.0, audio:5.5},
+  'gemini-4-argon':    {anatomy:2.5, fur:4.0, face:3.5, anim:5.0, inter:8.5, scene:6.5, perf:6.0, audio:6.0},
+  'gpt-5.6-sol':       {anatomy:3.5, fur:2.5, face:4.0, anim:5.0, inter:6.0, scene:5.0, perf:8.5, audio:5.0},
+  'gpt-6.1-sol':       {anatomy:7.2, fur:7.0, face:6.8, anim:6.8, inter:7.0, scene:8.6, perf:8.0, audio:6.0},
+  'mai-code-2-flash':  {anatomy:3.0, fur:2.5, face:3.5, anim:4.5, inter:4.5, scene:6.0, perf:7.5, audio:4.5}
+};
+
+const ranked = CATS.map(c=>({...c, sc:SCORES[c.id], total:CRITERIA.reduce((a,x)=>a+SCORES[c.id][x.k]*x.w,0)/100}))
+  .sort((a,b)=>b.total-a.total);
+const rankScore = id => ranked.findIndex(c=>c.id===id)+1;
+const totalOf = id => ranked.find(c=>c.id===id).total;
+
+/* scoreboard */
+$('#lb').innerHTML = ranked.map((c,i)=>`
+  <a class="lb-row" href="#cat-${c.id}"><span class="lb-rank">${i+1}</span>
+  <span class="lb-name"><b>${c.name}</b><span>${TOOLS[c.tool].label}</span></span>
+  <span class="lb-bar"><i data-w="${c.total*10}" style="--c:${TOOLS[c.tool].c}"></i></span>
+  <span class="lb-score">${c.total.toFixed(1)}</span></a>`).join('');
+new IntersectionObserver((es,o)=>es.forEach(e=>{if(e.isIntersecting){e.target.querySelectorAll('.lb-bar i').forEach(f=>f.style.width=f.dataset.w+'%');o.unobserve(e.target)}}),{threshold:.2}).observe($('#lb'));
+$('#heat').innerHTML = `<thead><tr><th>Model</th>${CRITERIA.map(x=>`<th>${x.n}<small>${x.w}%</small></th>`).join('')}<th>Overall</th><th>Credits</th></tr></thead><tbody>`
+  + ranked.map(c=>`<tr><td>${c.name}</td>${CRITERIA.map(x=>`<td class="v" style="--p:${c.sc[x.k]*6}">${c.sc[x.k].toFixed(1)}</td>`).join('')}<td><b>${c.total.toFixed(1)}</b></td><td>${fmt(c.credits)}</td></tr>`).join('') + '</tbody>';
+$('#rubric').innerHTML = CRITERIA.map(x=>`<div class="r"><b>${x.n}<em>${x.w}%</em></b><p>${x.d}</p></div>`).join('');
+
 /* typed prompt */
 (function(){
   const el=$('#typed'); const reduce=matchMedia('(prefers-reduced-motion:reduce)').matches;
@@ -331,8 +418,8 @@ const cheap = known.reduce((a,c)=>c.credits<a.credits?c:a), dear = known.reduce(
 $('#stats').innerHTML = [
   [CATS.length,'models tested'],
   [fmt(total),'credits across all runs'],
-  [`${cheap.credits} → ${fmt(dear.credits)}`,'cheapest to priciest cat'],
-  [`${Math.round(dear.credits/cheap.credits)}×`,'cost gap, same prompt']
+  [CRITERIA.length,'weighted criteria'],
+  [`${ranked[0].total.toFixed(1)} / 10`,`top score: ${ranked[0].name}`]
 ].map(([b,s])=>`<div class="stat"><b>${b}</b><span>${s}</span></div>`).join('');
 
 /* chart */
@@ -344,68 +431,91 @@ $('#chart').innerHTML = sorted.map(c=>`
   + `<div class="legend">${Object.values(TOOLS).map(t=>`<span><i class="dot" style="background:${t.c}"></i>${t.label}</span>`).join('')}</div>`;
 new IntersectionObserver((es,o)=>es.forEach(e=>{if(e.isIntersecting){e.target.querySelectorAll('.fill').forEach(f=>f.style.width=f.dataset.w+'%');o.unobserve(e.target)}}),{threshold:.2}).observe($('#chart'));
 
+/* muting: injected ahead of each cat's own scripts */
+function muteFn(){
+  const orig=AudioNode.prototype.connect, sinks=new WeakMap();
+  AudioNode.prototype.connect=function(d,...a){
+    if(window.AudioDestinationNode&&d instanceof AudioDestinationNode){
+      let g=sinks.get(d.context);
+      if(!g){g=d.context.createGain();g.gain.value=0;orig.call(g,d);sinks.set(d.context,g);}
+      return orig.call(this,g,...a);
+    }
+    return orig.call(this,d,...a);
+  };
+  const play=HTMLMediaElement.prototype.play;
+  HTMLMediaElement.prototype.play=function(){this.muted=true;this.volume=0;return play.apply(this,arguments);};
+  try{speechSynthesis.speak=()=>{};}catch(e){}
+}
+async function loadCat(iframe,c){
+  const u=new URL(url(c),location.href).href;
+  try{
+    const t=await (await fetch(u)).text();
+    const inj=`<base href="${u}"><script>(${muteFn})()<\/script>`;
+    iframe.srcdoc=/<head[^>]*>/i.test(t)?t.replace(/<head[^>]*>/i,m=>m+inj):inj+t;
+  }catch(e){iframe.src=u;}
+}
+function newFrame(c){
+  const i=document.createElement('iframe'); i.title=c.name; i.allow='fullscreen';
+  loadCat(i,c); return i;
+}
+
 /* cards */
 const picks = [];
 let filter='all';
 function frameHTML(c){
   return `<img src="assets/${c.id}.jpg" alt="" loading="lazy" onerror="this.remove()">
-    <button class="play" aria-label="Play ${c.name}"><span>▶ Play</span></button>`;
+    <button class="play" aria-label="Play ${c.name}"><span>▶ Play ${c.name}</span></button>`;
 }
 function render(){
   const s=$('#sort').value;
   let list=CATS.filter(c=>filter==='all'||c.tool===filter);
   list.sort({
+    'score':(a,b)=>totalOf(b.id)-totalOf(a.id),
     'credits-desc':(a,b)=>(b.credits??-1)-(a.credits??-1),
     'credits-asc':(a,b)=>(a.credits??1e9)-(b.credits??1e9),
     'name':(a,b)=>a.name.localeCompare(b.name),
     'size':(a,b)=>b.kb-a.kb}[s]);
   const rankOf = id => sorted.findIndex(c=>c.id===id)+1;
   $('#grid').innerHTML='';
+  $('#catnav').innerHTML='<ul>'+list.map(c=>`<li><a href="#cat-${c.id}">${c.name}</a></li>`).join('')+'</ul>';
   list.forEach(c=>{
     const t=TOOLS[c.tool], el=document.createElement('article');
-    el.className='card'+(picks.includes(c.id)?' picked':''); el.dataset.id=c.id;
+    el.className='card'+(picks.includes(c.id)?' picked':''); el.dataset.id=c.id; el.id='cat-'+c.id;
     el.innerHTML=`
-      <div class="frame">${c.id===cheap.id?'<span class="badge-fun">💰 Cheapest</span>':c.id===dear.id?'<span class="badge-fun">💎 Priciest</span>':''}
-        ${c.credits==null?'':`<span class="rank">#${rankOf(c.id)} by cost</span>`}${frameHTML(c)}</div>
-      <div class="meta">
-        <h3>${c.name}</h3><div class="vendor">${c.vendor}</div>
-        <div class="credits"><b>${fmt(c.credits)}</b><span>${c.credits==null?'credits (not reported)':'AI credits'}</span></div>
-        <div class="paws" aria-hidden="true">${paws(c)}</div>
-        <div class="tags"><span class="tag tool" style="--c:${t.c}">${t.label}</span><span class="tag">${c.build}</span><span class="tag">${c.three}</span><span class="tag">${c.kb} KB</span></div>
-        <p class="how">${c.how}</p>
-        <div class="actions">
-          <button class="btn" data-a="stage">Open on stage</button>
-          <a class="btn ghost" style="text-decoration:none" href="${url(c)}" target="_blank" rel="noopener">New tab ↗</a>
-          <label><input type="checkbox" data-a="cmp" ${picks.includes(c.id)?'checked':''}> Compare</label>
-        </div>
+      <div class="chead">
+        <div><h3>${c.name}</h3><div class="vendor">${c.vendor}</div></div>
+        <div class="credits"><span class="scorepill">${totalOf(c.id).toFixed(1)}<small>/ 10 · #${rankScore(c.id)}</small></span> <span class="muted">·</span> <b>${fmt(c.credits)}</b><span>${c.credits==null?'credits (not reported)':'AI credits'}</span></div>
+      </div>
+      <div class="tags"><span class="tag tool" style="--c:${t.c}">${t.label}</span><span class="tag">${c.build}</span><span class="tag">${c.three}</span><span class="tag">${c.kb} KB</span>
+        ${c.credits==null?'':`<span class="tag">#${rankOf(c.id)} by cost</span>`}</div>
+      <div class="frame">${frameHTML(c)}</div>
+      <p class="how">${c.how}</p>
+      <div class="actions">
+        <button class="btn" data-a="full">Fullscreen</button>
+        <a class="btn ghost" style="text-decoration:none" href="${url(c)}" target="_blank" rel="noopener">New tab ↗ (sound on)</a>
+        <label><input type="checkbox" data-a="cmp" ${picks.includes(c.id)?'checked':''}> Compare</label>
       </div>`;
     el.querySelector('.play').onclick=()=>play(el,c);
-    el.querySelector('[data-a=stage]').onclick=()=>stage(c);
+    el.querySelector('[data-a=full]').onclick=()=>{ play(el,c); const f=el.querySelector('.frame'); (f.requestFullscreen||(()=>{})).call(f); };
     el.querySelector('[data-a=cmp]').onchange=e=>pick(c,e.target.checked,e.target);
     $('#grid').appendChild(el);
   });
 }
-function play(el,c){
-  const f=el.querySelector('.frame'); const old=f.querySelector('iframe'); if(old) return;
-  const i=document.createElement('iframe'); i.src=url(c); i.title=c.name; i.allow='fullscreen; autoplay';
-  f.querySelector('.play').hidden=true; f.appendChild(i);
+function reset(el){
+  const c=CATS.find(x=>x.id===el.dataset.id), f=el.querySelector('.frame');
+  f.innerHTML=frameHTML(c); f.querySelector('.play').onclick=()=>play(el,c);
 }
-$('#stopall').onclick=()=>render();
+function play(el,c){
+  const f=el.querySelector('.frame'); if(f.querySelector('iframe')) return;
+  document.querySelectorAll('.card').forEach(o=>{ if(o!==el&&o.querySelector('.frame iframe')) reset(o); });
+  f.innerHTML=''; f.appendChild(newFrame(c));
+}
+$('#stopall').onclick=()=>document.querySelectorAll('.card').forEach(o=>{ if(o.querySelector('.frame iframe')) reset(o); });
 document.querySelectorAll('#filter button').forEach(b=>b.onclick=()=>{
   filter=b.dataset.f; document.querySelectorAll('#filter button').forEach(x=>x.setAttribute('aria-pressed',x===b)); render();});
 $('#sort').onchange=render;
 
-/* stage modal */
-const dlg=$('#stage');
-function stage(c){
-  $('#stageTitle').textContent=c.name; const t=TOOLS[c.tool];
-  $('#stageTag').textContent=`${t.label} · ${c.credits==null?'credits n/a':fmt(c.credits)+' credits'}`;
-  $('#stageFrame').src=url(c); dlg.showModal();
-}
-function closeStage(){dlg.close();}
-$('#stageClose').onclick=closeStage;
-dlg.addEventListener('close',()=>{$('#stageFrame').src='about:blank';});
-dlg.addEventListener('click',e=>{if(e.target===dlg)closeStage();});
+/* stage modal removed: each cat now has a full-size panel */
 
 /* compare */
 function pick(c,on,box){
@@ -421,7 +531,7 @@ function drawCompare(){
     const c=CATS.find(x=>x.id===picks[i]); const body=$('#body'+k), head=$('#cmp'+k);
     if(!c){head.textContent='Cat '+k; body.innerHTML=`Pick a ${i?'second':'first'} cat`; return;}
     head.innerHTML=`${c.name} <span class="muted small">· ${TOOLS[c.tool].label} · ${c.credits==null?'credits n/a':fmt(c.credits)+' credits'}</span>`;
-    if(body.dataset.id!==c.id){body.dataset.id=c.id; body.innerHTML=`<iframe src="${url(c)}" title="${c.name}" allow="fullscreen; autoplay"></iframe>`;}
+    if(body.dataset.id!==c.id){body.dataset.id=c.id; body.innerHTML=''; body.appendChild(newFrame(c));}
   });
   [['A',0],['B',1]].forEach(([k,i])=>{ if(!picks[i]) $('#body'+k).dataset.id=''; });
   if(picks.length===2) $('#compare').scrollIntoView({behavior:'smooth'});

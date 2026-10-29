@@ -4,15 +4,17 @@ An informal, fun benchmark: the same one-shot prompt given to several AI models 
 
 > Using no folder/local file context or previous session context Create a new realistic interactive 3d cat with three.js from scratch.
 
-| Model | Tool | AI credits |
-|---|---|---|
-| Claude Opus 5.5 | Microsoft Cowork | 2,314 |
-| Claude Sonnet 5.5 | GitHub Copilot | 2,175 |
-| Grok 4.7 | GitHub Copilot | 848 |
-| Gemini 4 Argon | GitHub Copilot | 252 |
-| GPT-5.6 Sol | GitHub Copilot | 201 |
-| GPT-6.1 Sol | GitHub Copilot | 179 |
-| MAI-Code-2-Flash | GitHub Copilot | Unknown |
+| Model | Tool | Score /10 (provisional) | AI credits |
+|---|---|---|---|
+| Claude Opus 5.5 | Microsoft Cowork | 8.0 | 2,314 |
+| Claude Sonnet 5.5 | GitHub Copilot | 7.8 | 2,175 |
+| GPT-6.1 Sol | GitHub Copilot | 7.2 | 179 |
+| Grok 4.7 | GitHub Copilot | 5.3 | 848 |
+| Gemini 4 Argon | GitHub Copilot | 5.0 | 252 |
+| GPT-5.6 Sol | GitHub Copilot | 4.7 | 201 |
+| MAI-Code-2-Flash | GitHub Copilot | 4.3 | Unknown |
+
+Scores are a weighted 0–10 average of eight criteria: anatomy 20%, fur 15%, animation 15%, interactivity 15%, face 10%, scene 10%, performance 10%, audio 5%. They are first-pass and editable in the `SCORES` table in `index.html`.
 
 Each result lives in `cats/<model>/index.html`. The showcase is `index.html`, served with GitHub Pages.
 
