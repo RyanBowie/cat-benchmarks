@@ -1,4 +1,4 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="en-GB" data-theme="dark">
 <head>
 <meta charset="utf-8">
@@ -242,7 +242,7 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:12px 28px;justify-content:space-bet
   <section id="cats">
     <div class="wrap">
       <h2>Meet the cats</h2>
-      <p class="sub">Each cat has a 10-second clip recorded from its own page. Hit <b>Launch the live cat</b> to play with the real thing in a new tab (the HTML is in the repo, with sound). Six live WebGL scenes at once would melt most machines, so clips it is.</p>
+      <p class="sub">Each cat has a short clip recorded from its own page. Hit <b>Launch the live cat</b> to play with the real thing in a new tab (the HTML is in the repo, with sound). Seven live WebGL scenes at once would melt most machines, so clips it is.</p>
       <div class="toolbar">
         <div class="seg" role="group" aria-label="Filter by build tool" id="filter">
           <button aria-pressed="true" data-f="all">All</button>
@@ -417,7 +417,7 @@ new IntersectionObserver((es,o)=>es.forEach(e=>{if(e.isIntersecting){e.target.qu
 /* cards */
 let filter='all';
 function frameHTML(c){
-  return `<video muted loop playsinline preload="none" poster="assets/${c.id}.jpg" data-src="videos/${c.id}.mp4" aria-label="10 second clip of ${c.name}"></video><span class="tag-rec">10 s clip</span>`;
+  return `<video muted loop playsinline preload="none" poster="assets/${c.id}.jpg" data-src="videos/${c.id}.mp4" aria-label="Preview clip of ${c.name}"></video><span class="tag-rec">Preview clip</span>`;
 }
 function render(){
   const s=$('#sort').value;
