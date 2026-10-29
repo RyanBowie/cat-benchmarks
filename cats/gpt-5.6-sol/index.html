@@ -1,0 +1,1627 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="A realistic, procedural, interactive Three.js cat." />
+  <title>Miso — Interactive 3D Cat</title>
+  <script>
+    (() => {
+      const param = new URLSearchParams(window.location.search).get("scoutTheme");
+      const theme =
+        param || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+      document.documentElement.setAttribute("data-theme", theme);
+    })();
+  </script>
+  <style>
+    :root {
+      color-scheme: light;
+      --cp-bg: #f7f4ef;
+      --cp-bg-elevated: #fcfbf8;
+      --cp-surface: #ffffff;
+      --cp-surface-soft: #f5f5f5;
+      --cp-border: #dedede;
+      --cp-border-strong: #919191;
+      --cp-text: #242424;
+      --cp-text-muted: #5c5c5c;
+      --cp-text-soft: #6f6f6f;
+      --cp-accent: #b11f4b;
+      --cp-accent-hover: #9a1a41;
+      --cp-accent-soft: rgba(177, 31, 75, 0.08);
+      --cp-accent-fg: #ffffff;
+      --cp-success: #16a34a;
+      --cp-danger: #dc2626;
+      --cp-warning: #f59e0b;
+      --cp-link: #0078d4;
+      --cp-shadow: 0 18px 48px rgba(0, 0, 0, 0.12);
+      --cp-overlay: rgba(255, 255, 255, 0.8);
+      --cp-panel: rgba(255, 255, 255, 0.86);
+      --cp-panel-strong: rgba(255, 255, 255, 0.96);
+      --cp-sheen: rgba(255, 255, 255, 0.55);
+      --cp-highlight: rgba(177, 31, 75, 0.12);
+    }
+    html[data-theme="dark"] {
+      color-scheme: dark;
+      --cp-bg: #3d3b3a;
+      --cp-bg-elevated: #343231;
+      --cp-surface: #292929;
+      --cp-surface-soft: #2e2e2e;
+      --cp-border: #474747;
+      --cp-border-strong: #5f5f5f;
+      --cp-text: #dedede;
+      --cp-text-muted: #919191;
+      --cp-text-soft: #b0b0b0;
+      --cp-accent: #fd8ea1;
+      --cp-accent-hover: #fb7b91;
+      --cp-accent-soft: rgba(253, 142, 161, 0.14);
+      --cp-accent-fg: #1a1a1a;
+      --cp-success: #4ade80;
+      --cp-danger: #f87171;
+      --cp-warning: #fbbf24;
+      --cp-link: #4da6ff;
+      --cp-shadow: 0 18px 48px rgba(0, 0, 0, 0.32);
+      --cp-overlay: rgba(41, 41, 41, 0.88);
+      --cp-panel: rgba(41, 41, 41, 0.72);
+      --cp-panel-strong: rgba(41, 41, 41, 0.96);
+      --cp-sheen: rgba(255, 255, 255, 0.04);
+      --cp-highlight: rgba(253, 142, 161, 0.12);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      overflow: hidden;
+    }
+
+    body {
+      background: var(--cp-bg);
+      color: var(--cp-text);
+      font-family: "Segoe UI", Aptos, Calibri, -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    button,
+    select {
+      font: inherit;
+    }
+
+    button:focus-visible,
+    select:focus-visible {
+      outline: 3px solid var(--cp-accent-soft);
+      outline-offset: 2px;
+      border-color: var(--cp-accent);
+    }
+
+    #scene {
+      position: fixed;
+      inset: 0;
+      touch-action: none;
+      cursor: grab;
+    }
+
+    #scene:active {
+      cursor: grabbing;
+    }
+
+    #scene.toy-active {
+      cursor: crosshair;
+    }
+
+    .topbar {
+      position: fixed;
+      z-index: 4;
+      top: 20px;
+      left: 20px;
+      right: 20px;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      pointer-events: none;
+    }
+
+    .identity,
+    .status-card,
+    .control-dock,
+    .hint {
+      border: 1px solid var(--cp-border);
+      background: var(--cp-panel-strong);
+      box-shadow:
+        0 0 2px color-mix(in srgb, var(--cp-text) 12%, transparent),
+        0 1px 2px color-mix(in srgb, var(--cp-text) 14%, transparent);
+    }
+
+    .identity {
+      width: min(332px, calc(100vw - 40px));
+      padding: 16px;
+      border-radius: 16px;
+      pointer-events: auto;
+    }
+
+    .eyebrow {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 4px;
+      color: var(--cp-accent);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .live-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--cp-success);
+      box-shadow: 0 0 0 4px color-mix(in srgb, var(--cp-success) 16%, transparent);
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(26px, 4vw, 38px);
+      line-height: 1;
+      letter-spacing: -0.04em;
+    }
+
+    .subtitle {
+      margin: 8px 0 0;
+      color: var(--cp-text-muted);
+      font-size: 14px;
+      line-height: 1.45;
+    }
+
+    .status-card {
+      min-width: 180px;
+      padding: 12px 14px;
+      border-radius: 0.625rem;
+      pointer-events: auto;
+    }
+
+    .status-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      font-size: 12px;
+      color: var(--cp-text-muted);
+    }
+
+    .status-value {
+      color: var(--cp-text);
+      font-weight: 700;
+    }
+
+    .meter {
+      height: 4px;
+      margin-top: 8px;
+      overflow: hidden;
+      border-radius: 999px;
+      background: var(--cp-surface-soft);
+    }
+
+    .meter-fill {
+      width: 66%;
+      height: 100%;
+      border-radius: inherit;
+      background: var(--cp-accent);
+      transition: width 240ms ease;
+    }
+
+    .control-dock {
+      position: fixed;
+      z-index: 5;
+      left: 50%;
+      bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      max-width: calc(100vw - 24px);
+      padding: 8px;
+      border-radius: 16px;
+      transform: translateX(-50%);
+    }
+
+    .action,
+    .select-wrap {
+      min-height: 42px;
+      border: 1px solid var(--cp-border);
+      border-radius: 0.625rem;
+      background: var(--cp-surface);
+      color: var(--cp-text);
+    }
+
+    .action {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 0 14px;
+      cursor: pointer;
+      transition:
+        border-color 160ms ease,
+        background 160ms ease,
+        transform 160ms ease;
+    }
+
+    .action:hover {
+      border-color: var(--cp-border-strong);
+      background: var(--cp-surface-soft);
+      transform: translateY(-1px);
+    }
+
+    .action.primary,
+    .action[aria-pressed="true"] {
+      border-color: var(--cp-accent);
+      background: var(--cp-accent);
+      color: var(--cp-accent-fg);
+    }
+
+    .action.primary:hover,
+    .action[aria-pressed="true"]:hover {
+      background: var(--cp-accent-hover);
+    }
+
+    .icon {
+      width: 18px;
+      height: 18px;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 1.8;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .select-wrap {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 0 10px 0 12px;
+      color: var(--cp-text-muted);
+    }
+
+    select {
+      min-height: 40px;
+      border: 0;
+      background: transparent;
+      color: var(--cp-text);
+      cursor: pointer;
+      outline: none;
+    }
+
+    .hint {
+      position: fixed;
+      z-index: 3;
+      right: 20px;
+      bottom: 84px;
+      max-width: 240px;
+      padding: 10px 12px;
+      border-radius: 0.625rem;
+      color: var(--cp-text-muted);
+      font-size: 12px;
+      line-height: 1.4;
+      transition:
+        opacity 280ms ease,
+        transform 280ms ease;
+      pointer-events: none;
+    }
+
+    .hint.hidden {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+
+    .sound-toggle {
+      position: fixed;
+      z-index: 4;
+      top: 20px;
+      right: 20px;
+      width: 42px;
+      height: 42px;
+      padding: 0;
+      border-radius: 50%;
+    }
+
+    .toast {
+      position: fixed;
+      z-index: 8;
+      top: 22px;
+      left: 50%;
+      padding: 10px 14px;
+      border: 1px solid var(--cp-border);
+      border-radius: 0.625rem;
+      background: var(--cp-panel-strong);
+      color: var(--cp-text);
+      font-size: 13px;
+      font-weight: 600;
+      opacity: 0;
+      transform: translate(-50%, -12px);
+      transition:
+        opacity 180ms ease,
+        transform 180ms ease;
+      pointer-events: none;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translate(-50%, 0);
+    }
+
+    .loader {
+      position: fixed;
+      z-index: 20;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      background: var(--cp-bg);
+      transition: opacity 500ms ease;
+    }
+
+    .loader.done {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .loader-inner {
+      display: grid;
+      justify-items: center;
+      gap: 12px;
+      color: var(--cp-text-muted);
+      font-size: 13px;
+    }
+
+    .paw-loader {
+      width: 36px;
+      height: 36px;
+      color: var(--cp-accent);
+      animation: pulse 900ms ease-in-out infinite alternate;
+    }
+
+    @keyframes pulse {
+      to {
+        transform: scale(1.12) rotate(4deg);
+        opacity: 0.55;
+      }
+    }
+
+    @media (max-width: 760px) {
+      .topbar {
+        top: 12px;
+        left: 12px;
+        right: 12px;
+      }
+
+      .identity {
+        width: min(270px, calc(100vw - 68px));
+        padding: 13px;
+      }
+
+      .subtitle {
+        display: none;
+      }
+
+      .status-card {
+        display: none;
+      }
+
+      .sound-toggle {
+        top: 12px;
+        right: 12px;
+      }
+
+      .control-dock {
+        bottom: 12px;
+        width: calc(100vw - 24px);
+        gap: 4px;
+        padding: 6px;
+        justify-content: center;
+      }
+
+      .action {
+        flex: 0 0 auto;
+        width: 42px;
+        padding: 0;
+      }
+
+      .action-label {
+        display: none;
+      }
+
+      .select-wrap {
+        width: 78px;
+        flex: 0 0 78px;
+        gap: 0;
+        padding: 0 6px;
+      }
+
+      .select-wrap > span {
+        display: none;
+      }
+
+      select {
+        width: 64px;
+        font-size: 12px;
+        text-overflow: ellipsis;
+      }
+
+      .hint {
+        right: 12px;
+        bottom: 76px;
+      }
+    }
+
+    @media (max-width: 360px) {
+      .select-wrap {
+        display: none;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        scroll-behavior: auto !important;
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+  </style>
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js",
+        "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"
+      }
+    }
+  </script>
+</head>
+<body>
+  <div class="loader" id="loader" aria-live="polite">
+    <div class="loader-inner">
+      <svg class="paw-loader" viewBox="0 0 64 64" aria-hidden="true">
+        <path d="M18 29c5 0 8-5 7-10s-5-9-10-8-7 6-6 11 4 7 9 7Zm28 0c-5 0-8-5-7-10s5-9 10-8 7 6 6 11-4 7-9 7ZM9 41c4 2 9 0 11-4s0-9-4-11-9 1-10 5-1 8 3 10Zm46 0c-4 2-9 0-11-4s0-9 4-11 9 1 10 5 1 8-3 10ZM32 25c-9 0-19 12-17 22 1 7 8 9 17 4 9 5 16 3 17-4 2-10-8-22-17-22Z" fill="currentColor"/>
+      </svg>
+      <span>Waking Miso up…</span>
+    </div>
+  </div>
+
+  <canvas id="scene" aria-label="Interactive 3D cat scene"></canvas>
+
+  <div class="topbar">
+    <section class="identity" aria-label="Cat profile">
+      <div class="eyebrow"><span class="live-dot"></span> Interactive companion</div>
+      <h1>Miso</h1>
+      <p class="subtitle">A curious procedural cat. Move slowly, offer a treat, or let her chase the light.</p>
+    </section>
+    <section class="status-card" aria-label="Cat mood">
+      <div class="status-row">
+        <span>Mood</span>
+        <span class="status-value" id="mood">Curious</span>
+      </div>
+      <div class="meter" aria-hidden="true"><div class="meter-fill" id="moodMeter"></div></div>
+    </section>
+  </div>
+
+  <button class="action sound-toggle" id="soundButton" type="button" aria-label="Toggle sound" aria-pressed="true">
+    <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M11 5 6 9H3v6h3l5 4V5Z"></path>
+      <path class="sound-wave" d="M15 9a4 4 0 0 1 0 6M18 6a8 8 0 0 1 0 12"></path>
+    </svg>
+  </button>
+
+  <div class="control-dock" aria-label="Cat controls">
+    <button class="action primary" id="petButton" type="button" aria-label="Pet Miso">
+      <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M8.2 11.4 6.7 7.9a1.7 1.7 0 0 1 3.1-1.4l1.5 3.3-1.9-5a1.7 1.7 0 1 1 3.2-1.2l1.8 4.8-.8-3a1.7 1.7 0 1 1 3.3-.9l1.3 4.8.2-.8a1.7 1.7 0 0 1 3.3.8l-1.2 5.1c-.7 3.2-3.7 5.4-7 5l-1.3-.2a6 6 0 0 1-4.8-3.8L6 12.3a1.7 1.7 0 0 1 2.2-.9Z"></path>
+      </svg>
+      <span class="action-label">Pet</span>
+    </button>
+    <button class="action" id="treatButton" type="button" aria-label="Offer a treat">
+      <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M7 8.5c-2.2-.5-3.7-2.3-3-4s2.9-1.8 4.5-.2C9 2.2 10.4 1 12 1s3 1.2 3.5 3.3c1.6-1.6 3.8-1.5 4.5.2s-.8 3.5-3 4l1 11.5H6L7 8.5Z"></path>
+        <path d="M8 9h8"></path>
+      </svg>
+      <span class="action-label">Treat</span>
+    </button>
+    <button class="action" id="toyButton" type="button" aria-label="Toggle laser toy" aria-pressed="false">
+      <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+        <circle cx="8" cy="16" r="4"></circle>
+        <path d="M11 13 21 3M17 3h4v4"></path>
+      </svg>
+      <span class="action-label">Laser toy</span>
+    </button>
+    <button class="action" id="meowButton" type="button" aria-label="Ask Miso to meow">
+      <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M4 13V8l4 3 4-3v5c0 3-1.8 5-4 5s-4-2-4-5Z"></path>
+        <path d="M15 9c2 1 2 5 0 6M18 6c4 3 4 9 0 12"></path>
+      </svg>
+      <span class="action-label">Meow</span>
+    </button>
+    <label class="select-wrap">
+      <span>Coat</span>
+      <select id="coatSelect" aria-label="Select coat color">
+        <option value="tabby">Brown tabby</option>
+        <option value="silver">Silver tabby</option>
+        <option value="ginger">Ginger tabby</option>
+        <option value="tuxedo">Tuxedo</option>
+      </select>
+    </label>
+  </div>
+
+  <div class="hint" id="hint">Drag to look around · Scroll to zoom · Click Miso to pet</div>
+  <div class="toast" id="toast" role="status"></div>
+
+  <script type="module">
+    import * as THREE from "three";
+    import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+    import { RoomEnvironment } from "three/addons/environments/RoomEnvironment.js";
+
+    const canvas = document.querySelector("#scene");
+    const loader = document.querySelector("#loader");
+    const hint = document.querySelector("#hint");
+    const moodLabel = document.querySelector("#mood");
+    const moodMeter = document.querySelector("#moodMeter");
+    const toast = document.querySelector("#toast");
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const css = getComputedStyle(document.documentElement);
+    const cssColor = (name) => css.getPropertyValue(name).trim();
+
+    const renderer = new THREE.WebGLRenderer({
+      canvas,
+      antialias: true,
+      alpha: false,
+      powerPreference: "high-performance"
+    });
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    renderer.outputColorSpace = THREE.SRGBColorSpace;
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.08;
+
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(cssColor("--cp-bg"));
+    scene.fog = new THREE.FogExp2(cssColor("--cp-bg"), 0.036);
+
+    const camera = new THREE.PerspectiveCamera(34, window.innerWidth / window.innerHeight, 0.1, 100);
+    camera.position.set(5.2, 3.1, 6.9);
+
+    const controls = new OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.05;
+    controls.target.set(0, 0.92, 0.2);
+    controls.minDistance = 4.1;
+    controls.maxDistance = 10;
+    controls.minPolarAngle = 0.55;
+    controls.maxPolarAngle = 1.52;
+    controls.enablePan = false;
+
+    let narrowFraming = null;
+    function frameScene(force = false) {
+      const aspect = window.innerWidth / window.innerHeight;
+      const isNarrow = aspect < 0.58;
+      camera.fov = isNarrow ? 52 : 34;
+      controls.maxDistance = isNarrow ? 14 : 10;
+      if (force || narrowFraming !== isNarrow) {
+        camera.position.set(
+          isNarrow ? 4.5 : 5.2,
+          isNarrow ? 3.35 : 3.1,
+          isNarrow ? 10.8 : 6.9
+        );
+        controls.target.set(0, isNarrow ? 1.02 : 0.92, 0.2);
+      }
+      narrowFraming = isNarrow;
+      camera.updateProjectionMatrix();
+      controls.update();
+    }
+    frameScene(true);
+
+    const environment = new RoomEnvironment();
+    const pmrem = new THREE.PMREMGenerator(renderer);
+    scene.environment = pmrem.fromScene(environment, 0.04).texture;
+    environment.dispose();
+    pmrem.dispose();
+
+    const keyLight = new THREE.DirectionalLight(0xfff4e8, 3.3);
+    keyLight.position.set(4.5, 7, 5);
+    keyLight.castShadow = true;
+    keyLight.shadow.mapSize.set(2048, 2048);
+    keyLight.shadow.camera.near = 0.1;
+    keyLight.shadow.camera.far = 20;
+    keyLight.shadow.camera.left = -4;
+    keyLight.shadow.camera.right = 4;
+    keyLight.shadow.camera.top = 4;
+    keyLight.shadow.camera.bottom = -4;
+    keyLight.shadow.bias = -0.0004;
+    scene.add(keyLight);
+
+    const rimLight = new THREE.DirectionalLight(0xb8d4ff, 1.45);
+    rimLight.position.set(-4, 4, -4);
+    scene.add(rimLight);
+
+    const warmFill = new THREE.PointLight(0xffb99a, 1.4, 9, 2);
+    warmFill.position.set(-3.5, 2.4, 3);
+    scene.add(warmFill);
+
+    const floorMaterial = new THREE.MeshStandardMaterial({
+      color: new THREE.Color(cssColor("--cp-bg-elevated")),
+      roughness: 0.86,
+      metalness: 0
+    });
+    const floor = new THREE.Mesh(new THREE.CircleGeometry(7, 96), floorMaterial);
+    floor.rotation.x = -Math.PI / 2;
+    floor.receiveShadow = true;
+    scene.add(floor);
+
+    const rug = new THREE.Mesh(
+      new THREE.CircleGeometry(2.45, 96),
+      new THREE.MeshStandardMaterial({
+        color: new THREE.Color(cssColor("--cp-surface-soft")),
+        roughness: 1
+      })
+    );
+    rug.rotation.x = -Math.PI / 2;
+    rug.position.y = 0.004;
+    rug.receiveShadow = true;
+    scene.add(rug);
+
+    const ring = new THREE.Mesh(
+      new THREE.RingGeometry(2.47, 2.49, 96),
+      new THREE.MeshBasicMaterial({
+        color: new THREE.Color(cssColor("--cp-border")),
+        transparent: true,
+        opacity: 0.7,
+        side: THREE.DoubleSide
+      })
+    );
+    ring.rotation.x = -Math.PI / 2;
+    ring.position.y = 0.008;
+    scene.add(ring);
+
+    const coatPresets = {
+      tabby: {
+        base: "#81624a",
+        light: "#b89a78",
+        dark: "#2b211c",
+        chest: "#c9b69b",
+        stripe: "#33251e",
+        nose: "#8d5d59",
+        eye: "#b7c765"
+      },
+      silver: {
+        base: "#8f9294",
+        light: "#c7c8c5",
+        dark: "#2c3032",
+        chest: "#dadbd7",
+        stripe: "#34383b",
+        nose: "#a87878",
+        eye: "#b8cf73"
+      },
+      ginger: {
+        base: "#b66d2f",
+        light: "#e1ac65",
+        dark: "#6e3319",
+        chest: "#f0cf9d",
+        stripe: "#7c3f1d",
+        nose: "#aa6960",
+        eye: "#b6ca66"
+      },
+      tuxedo: {
+        base: "#242629",
+        light: "#4d5052",
+        dark: "#111214",
+        chest: "#e5e2da",
+        stripe: "#0e0f10",
+        nose: "#a46a72",
+        eye: "#afc96e"
+      }
+    };
+
+    let activePreset = coatPresets.tabby;
+    const coatMaterials = [];
+    const chestMaterials = [];
+    const stripeMaterials = [];
+    const eyeIrisMaterials = [];
+    const noseMaterials = [];
+
+    function createFurTexture(preset) {
+      const textureCanvas = document.createElement("canvas");
+      textureCanvas.width = 512;
+      textureCanvas.height = 512;
+      const ctx = textureCanvas.getContext("2d");
+      ctx.fillStyle = preset.base;
+      ctx.fillRect(0, 0, 512, 512);
+
+      const gradient = ctx.createLinearGradient(0, 0, 512, 512);
+      gradient.addColorStop(0, preset.light);
+      gradient.addColorStop(0.42, preset.base);
+      gradient.addColorStop(1, preset.dark);
+      ctx.globalAlpha = 0.28;
+      ctx.fillStyle = gradient;
+      ctx.fillRect(0, 0, 512, 512);
+
+      ctx.globalAlpha = 0.21;
+      ctx.lineCap = "round";
+      for (let y = -80; y < 600; y += 56) {
+        ctx.strokeStyle = preset.stripe;
+        ctx.lineWidth = 13 + Math.random() * 10;
+        ctx.beginPath();
+        ctx.moveTo(-30, y);
+        ctx.bezierCurveTo(120, y + 55, 285, y - 40, 545, y + 24);
+        ctx.stroke();
+      }
+
+      ctx.globalAlpha = 0.18;
+      for (let i = 0; i < 12500; i += 1) {
+        const value = 80 + Math.floor(Math.random() * 170);
+        ctx.fillStyle = `rgb(${value} ${value} ${value})`;
+        const x = Math.random() * 512;
+        const y = Math.random() * 512;
+        const length = 0.8 + Math.random() * 3.2;
+        ctx.fillRect(x, y, 0.55, length);
+      }
+
+      const texture = new THREE.CanvasTexture(textureCanvas);
+      texture.colorSpace = THREE.SRGBColorSpace;
+      texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
+      texture.repeat.set(1.7, 1.3);
+      texture.anisotropy = renderer.capabilities.getMaxAnisotropy();
+      return texture;
+    }
+
+    function createFurMaterial(preset = activePreset, repeat = 1) {
+      const material = new THREE.MeshStandardMaterial({
+        color: preset.base,
+        map: createFurTexture(preset),
+        roughness: 0.93,
+        metalness: 0,
+        bumpMap: createFurTexture(preset),
+        bumpScale: 0.018
+      });
+      material.map.repeat.multiplyScalar(repeat);
+      material.bumpMap.repeat.multiplyScalar(repeat);
+      coatMaterials.push(material);
+      return material;
+    }
+
+    function createSolidMaterial(color, roughness = 0.82) {
+      return new THREE.MeshStandardMaterial({ color, roughness, metalness: 0 });
+    }
+
+    function mesh(geometry, material, position, scale, parent = scene) {
+      const object = new THREE.Mesh(geometry, material);
+      object.position.set(...position);
+      object.scale.set(...scale);
+      object.castShadow = true;
+      object.receiveShadow = true;
+      parent.add(object);
+      return object;
+    }
+
+    const catRoot = new THREE.Group();
+    catRoot.rotation.y = -0.1;
+    scene.add(catRoot);
+
+    const bodyGroup = new THREE.Group();
+    bodyGroup.position.y = 0.02;
+    catRoot.add(bodyGroup);
+
+    const bodyMaterial = createFurMaterial();
+    const body = mesh(
+      new THREE.SphereGeometry(1, 72, 48),
+      bodyMaterial,
+      [0, 1.02, -0.12],
+      [0.88, 0.84, 1.32],
+      bodyGroup
+    );
+    body.userData.pettable = true;
+
+    const haunchLeft = mesh(
+      new THREE.SphereGeometry(1, 48, 36),
+      bodyMaterial,
+      [-0.55, 0.72, -0.68],
+      [0.62, 0.69, 0.68],
+      bodyGroup
+    );
+    const haunchRight = mesh(
+      new THREE.SphereGeometry(1, 48, 36),
+      bodyMaterial,
+      [0.55, 0.72, -0.68],
+      [0.62, 0.69, 0.68],
+      bodyGroup
+    );
+
+    const chestMaterial = createSolidMaterial(activePreset.chest, 0.96);
+    chestMaterials.push(chestMaterial);
+    const chest = mesh(
+      new THREE.SphereGeometry(1, 56, 42),
+      chestMaterial,
+      [0, 0.98, 0.91],
+      [0.53, 0.77, 0.35],
+      bodyGroup
+    );
+    chest.userData.pettable = true;
+
+    function createLeg(x, z, isFront) {
+      const legGroup = new THREE.Group();
+      legGroup.position.set(x, isFront ? 0.56 : 0.58, z);
+      bodyGroup.add(legGroup);
+      const leg = mesh(
+        new THREE.CapsuleGeometry(isFront ? 0.18 : 0.22, isFront ? 0.59 : 0.45, 8, 18),
+        bodyMaterial,
+        [0, 0, 0],
+        [1, 1, 1],
+        legGroup
+      );
+      leg.rotation.x = isFront ? -0.045 : 0.17;
+      const pawMaterial = isFront ? chestMaterial : bodyMaterial;
+      const paw = mesh(
+        new THREE.SphereGeometry(1, 36, 24),
+        pawMaterial,
+        [0, -0.41, isFront ? 0.1 : 0.08],
+        [0.235, 0.135, 0.31],
+        legGroup
+      );
+      const toeMaterial = createSolidMaterial(activePreset.dark, 1);
+      stripeMaterials.push(toeMaterial);
+      for (let i = -1; i <= 1; i += 1) {
+        const toe = mesh(
+          new THREE.CapsuleGeometry(0.008, 0.09, 4, 8),
+          toeMaterial,
+          [i * 0.09, -0.405, 0.45],
+          [1, 1, 1],
+          legGroup
+        );
+        toe.rotation.x = Math.PI / 2;
+      }
+      return legGroup;
+    }
+
+    const frontLegL = createLeg(-0.31, 0.83, true);
+    const frontLegR = createLeg(0.31, 0.83, true);
+    createLeg(-0.55, -0.62, false);
+    createLeg(0.55, -0.62, false);
+
+    const neck = mesh(
+      new THREE.SphereGeometry(1, 48, 32),
+      bodyMaterial,
+      [0, 1.36, 0.65],
+      [0.62, 0.57, 0.55],
+      bodyGroup
+    );
+
+    const headPivot = new THREE.Group();
+    headPivot.position.set(0, 1.58, 0.9);
+    headPivot.scale.setScalar(0.91);
+    bodyGroup.add(headPivot);
+
+    const head = mesh(
+      new THREE.SphereGeometry(1, 72, 52),
+      bodyMaterial,
+      [0, 0, 0],
+      [0.66, 0.61, 0.65],
+      headPivot
+    );
+    head.userData.pettable = true;
+
+    const cheekMaterial = createSolidMaterial(activePreset.light, 0.95);
+    coatMaterials.push(cheekMaterial);
+    const cheekL = mesh(
+      new THREE.SphereGeometry(1, 40, 30),
+      cheekMaterial,
+      [-0.25, -0.17, 0.53],
+      [0.255, 0.205, 0.18],
+      headPivot
+    );
+    const cheekR = mesh(
+      new THREE.SphereGeometry(1, 40, 30),
+      cheekMaterial,
+      [0.25, -0.17, 0.53],
+      [0.255, 0.205, 0.18],
+      headPivot
+    );
+
+    const chin = mesh(
+      new THREE.SphereGeometry(1, 32, 24),
+      chestMaterial,
+      [0, -0.37, 0.48],
+      [0.21, 0.14, 0.16],
+      headPivot
+    );
+
+    function createEar(side) {
+      const earPivot = new THREE.Group();
+      earPivot.position.set(side * 0.43, 0.43, -0.02);
+      earPivot.rotation.z = side * -0.19;
+      headPivot.add(earPivot);
+
+      const ear = mesh(
+        new THREE.ConeGeometry(0.35, 0.76, 3, 4),
+        bodyMaterial,
+        [0, 0.2, 0],
+        [1, 1, 0.64],
+        earPivot
+      );
+      ear.rotation.x = -0.07;
+      ear.rotation.y = side * 0.08;
+
+      const innerMaterial = createSolidMaterial(activePreset.nose, 1);
+      noseMaterials.push(innerMaterial);
+      const innerGeometry = new THREE.BufferGeometry();
+      innerGeometry.setAttribute(
+        "position",
+        new THREE.Float32BufferAttribute([
+          -0.15, -0.06, 0.235,
+           0.15, -0.06, 0.235,
+           0, 0.43, 0.235
+        ], 3)
+      );
+      innerGeometry.computeVertexNormals();
+      const inner = new THREE.Mesh(innerGeometry, innerMaterial);
+      inner.castShadow = false;
+      inner.position.y = 0.02;
+      earPivot.add(inner);
+      return earPivot;
+    }
+
+    const earL = createEar(-1);
+    const earR = createEar(1);
+
+    function createEye(side) {
+      const eyeGroup = new THREE.Group();
+      eyeGroup.position.set(side * 0.255, 0.08, 0.585);
+      headPivot.add(eyeGroup);
+
+      const sclera = mesh(
+        new THREE.SphereGeometry(1, 48, 32),
+        createSolidMaterial("#d9d2bd", 0.32),
+        [0, 0, 0],
+        [0.145, 0.105, 0.072],
+        eyeGroup
+      );
+      const irisMaterial = new THREE.MeshPhysicalMaterial({
+        color: activePreset.eye,
+        roughness: 0.25,
+        transmission: 0.05,
+        clearcoat: 1,
+        clearcoatRoughness: 0.1
+      });
+      eyeIrisMaterials.push(irisMaterial);
+      const iris = mesh(
+        new THREE.SphereGeometry(1, 40, 28),
+        irisMaterial,
+        [0, 0, 0.073],
+        [0.078, 0.08, 0.025],
+        eyeGroup
+      );
+      const pupil = mesh(
+        new THREE.SphereGeometry(1, 32, 24),
+        new THREE.MeshPhysicalMaterial({
+          color: "#080a09",
+          roughness: 0.08,
+          clearcoat: 1
+        }),
+        [0, 0, 0.102],
+        [0.021, 0.064, 0.013],
+        eyeGroup
+      );
+      const glint = mesh(
+        new THREE.SphereGeometry(1, 16, 12),
+        new THREE.MeshBasicMaterial({ color: "#ffffff" }),
+        [-0.024, 0.026, 0.112],
+        [0.014, 0.014, 0.007],
+        eyeGroup
+      );
+
+      const lidMaterial = createSolidMaterial(activePreset.dark, 0.95);
+      stripeMaterials.push(lidMaterial);
+      const lid = mesh(
+        new THREE.SphereGeometry(1, 40, 20, 0, Math.PI * 2, 0, Math.PI / 2),
+        lidMaterial,
+        [0, 0.104, 0.045],
+        [0.152, 0.022, 0.078],
+        eyeGroup
+      );
+      lid.rotation.x = Math.PI;
+      return { group: eyeGroup, sclera, iris, pupil, lid };
+    }
+
+    const eyeL = createEye(-1);
+    const eyeR = createEye(1);
+
+    const noseMaterial = new THREE.MeshPhysicalMaterial({
+      color: activePreset.nose,
+      roughness: 0.48,
+      clearcoat: 0.35,
+      clearcoatRoughness: 0.4
+    });
+    noseMaterials.push(noseMaterial);
+    const nose = mesh(
+      new THREE.SphereGeometry(1, 36, 24),
+      noseMaterial,
+      [0, -0.16, 0.72],
+      [0.12, 0.075, 0.075],
+      headPivot
+    );
+    nose.rotation.x = -0.12;
+
+    const mouthMaterial = new THREE.MeshBasicMaterial({ color: "#3b2023" });
+    function createCurveTube(points, radius, material, parent) {
+      const curve = new THREE.CatmullRomCurve3(points.map((point) => new THREE.Vector3(...point)));
+      const object = new THREE.Mesh(
+        new THREE.TubeGeometry(curve, 24, radius, 6, false),
+        material
+      );
+      object.castShadow = true;
+      parent.add(object);
+      return object;
+    }
+
+    createCurveTube(
+      [[0, -0.22, 0.71], [-0.02, -0.29, 0.73], [-0.13, -0.32, 0.7]],
+      0.009,
+      mouthMaterial,
+      headPivot
+    );
+    createCurveTube(
+      [[0, -0.22, 0.71], [0.02, -0.29, 0.73], [0.13, -0.32, 0.7]],
+      0.009,
+      mouthMaterial,
+      headPivot
+    );
+
+    const whiskerMaterial = new THREE.MeshPhysicalMaterial({
+      color: "#eee9df",
+      roughness: 0.4,
+      transmission: 0.08
+    });
+    for (const side of [-1, 1]) {
+      for (let i = 0; i < 4; i += 1) {
+        const y = -0.16 - i * 0.055;
+        const length = 0.66 + i * 0.035;
+        createCurveTube(
+          [
+            [side * 0.22, y, 0.7],
+            [side * 0.48, y + 0.02 - i * 0.006, 0.77],
+            [side * length, y + 0.08 - i * 0.035, 0.66]
+          ],
+          0.0042,
+          whiskerMaterial,
+          headPivot
+        );
+      }
+    }
+
+    const browMaterial = createSolidMaterial(activePreset.stripe, 0.96);
+    stripeMaterials.push(browMaterial);
+    for (const side of [-1, 1]) {
+      createCurveTube(
+        [
+          [side * 0.1, 0.32, 0.58],
+          [side * 0.23, 0.39, 0.59],
+          [side * 0.38, 0.34, 0.54]
+        ],
+        0.012,
+        browMaterial,
+        headPivot
+      );
+    }
+
+    for (let i = -2; i <= 2; i += 1) {
+      const stripe = mesh(
+        new THREE.CapsuleGeometry(0.011, 0.21 - Math.abs(i) * 0.023, 4, 10),
+        browMaterial,
+        [i * 0.1, 0.49 - Math.abs(i) * 0.03, 0.48],
+        [1, 1, 1],
+        headPivot
+      );
+      stripe.rotation.x = Math.PI / 2 + Math.abs(i) * 0.05;
+      stripe.rotation.z = -i * 0.12;
+    }
+
+    const tailRoot = new THREE.Group();
+    tailRoot.position.set(-0.62, 0.82, -1.12);
+    bodyGroup.add(tailRoot);
+    const tailPivots = [];
+    let tailParent = tailRoot;
+    for (let i = 0; i < 11; i += 1) {
+      const pivot = new THREE.Group();
+      if (i > 0) pivot.position.y = 0.34;
+      tailParent.add(pivot);
+      pivot.rotation.z = i < 3 ? 0.32 : -0.04;
+      pivot.rotation.x = i < 2 ? -0.22 : 0.06;
+      const segment = mesh(
+        new THREE.CapsuleGeometry(Math.max(0.085, 0.15 - i * 0.006), 0.24, 6, 14),
+        bodyMaterial,
+        [0, 0.17, 0],
+        [1, 1, 1],
+        pivot
+      );
+      tailPivots.push(pivot);
+      tailParent = pivot;
+    }
+    tailRoot.rotation.z = 1.02;
+    tailRoot.rotation.x = 0.35;
+
+    const furHaloMaterial = new THREE.MeshStandardMaterial({
+      color: activePreset.light,
+      roughness: 1,
+      transparent: true,
+      opacity: 0.095,
+      side: THREE.BackSide
+    });
+    coatMaterials.push(furHaloMaterial);
+    const halo = mesh(
+      new THREE.SphereGeometry(1, 64, 42),
+      furHaloMaterial,
+      [0, 1.02, -0.12],
+      [0.905, 0.865, 1.345],
+      bodyGroup
+    );
+    halo.castShadow = false;
+
+    const laserMaterial = new THREE.MeshBasicMaterial({ color: cssColor("--cp-danger") });
+    const laserDot = new THREE.Mesh(new THREE.CircleGeometry(0.045, 32), laserMaterial);
+    laserDot.rotation.x = -Math.PI / 2;
+    laserDot.position.set(1.2, 0.018, 1.5);
+    laserDot.visible = false;
+    scene.add(laserDot);
+
+    const laserGlow = new THREE.PointLight(cssColor("--cp-danger"), 0.8, 0.75, 2);
+    laserGlow.visible = false;
+    scene.add(laserGlow);
+
+    const treat = new THREE.Mesh(
+      new THREE.DodecahedronGeometry(0.095, 1),
+      new THREE.MeshStandardMaterial({ color: "#8b522c", roughness: 0.95 })
+    );
+    treat.castShadow = true;
+    treat.visible = false;
+    scene.add(treat);
+
+    const heartGeometry = new THREE.Shape();
+    heartGeometry.moveTo(0, 0.08);
+    heartGeometry.bezierCurveTo(-0.18, -0.08, -0.25, 0.16, -0.1, 0.22);
+    heartGeometry.bezierCurveTo(-0.02, 0.25, 0, 0.18, 0, 0.15);
+    heartGeometry.bezierCurveTo(0, 0.18, 0.02, 0.25, 0.1, 0.22);
+    heartGeometry.bezierCurveTo(0.25, 0.16, 0.18, -0.08, 0, 0.08);
+    const heartMaterial = new THREE.MeshBasicMaterial({
+      color: cssColor("--cp-accent"),
+      side: THREE.DoubleSide,
+      transparent: true
+    });
+    const hearts = [];
+    for (let i = 0; i < 8; i += 1) {
+      const heart = new THREE.Mesh(new THREE.ShapeGeometry(heartGeometry), heartMaterial.clone());
+      heart.scale.setScalar(0.28 + Math.random() * 0.18);
+      heart.visible = false;
+      scene.add(heart);
+      hearts.push(heart);
+    }
+
+    const raycaster = new THREE.Raycaster();
+    const pointer = new THREE.Vector2();
+    const floorPlane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0);
+    const floorHit = new THREE.Vector3();
+    const interactables = [head, body, chest, cheekL, cheekR, nose, haunchLeft, haunchRight];
+    let toyActive = false;
+    let petEnergy = 0;
+    let targetPetEnergy = 0;
+    let moodValue = 66;
+    let soundEnabled = true;
+    let treatStart = -100;
+    let petStart = -100;
+    let isPetting = false;
+    let pointerDown = false;
+    let pointerMoved = false;
+    let downPosition = { x: 0, y: 0 };
+    let blinkStart = -100;
+    let nextBlink = 2.4;
+    let swatStart = -100;
+    let nextSwat = 1.2;
+    let lastInteraction = performance.now();
+    let toastTimer;
+    let audioContext;
+
+    function updateMood(label, value) {
+      moodValue = Math.max(0, Math.min(100, value));
+      moodLabel.textContent = label;
+      moodMeter.style.width = `${moodValue}%`;
+    }
+
+    function showToast(message) {
+      toast.textContent = message;
+      toast.classList.add("show");
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => toast.classList.remove("show"), 1700);
+    }
+
+    function ensureAudio() {
+      if (!audioContext) {
+        audioContext = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      if (audioContext.state === "suspended") audioContext.resume();
+      return audioContext;
+    }
+
+    function playPurr() {
+      if (!soundEnabled) return;
+      const context = ensureAudio();
+      const now = context.currentTime;
+      const oscillator = context.createOscillator();
+      const gain = context.createGain();
+      const tremolo = context.createOscillator();
+      const tremoloGain = context.createGain();
+      oscillator.type = "sawtooth";
+      oscillator.frequency.setValueAtTime(32, now);
+      tremolo.frequency.setValueAtTime(24, now);
+      tremoloGain.gain.setValueAtTime(0.018, now);
+      gain.gain.setValueAtTime(0.0001, now);
+      gain.gain.exponentialRampToValueAtTime(0.045, now + 0.08);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + 1.15);
+      tremolo.connect(tremoloGain);
+      tremoloGain.connect(gain.gain);
+      oscillator.connect(gain).connect(context.destination);
+      oscillator.start(now);
+      tremolo.start(now);
+      oscillator.stop(now + 1.2);
+      tremolo.stop(now + 1.2);
+    }
+
+    function playMeow() {
+      if (!soundEnabled) {
+        showToast("Sound is muted");
+        return;
+      }
+      const context = ensureAudio();
+      const now = context.currentTime;
+      const output = context.createGain();
+      output.gain.setValueAtTime(0.0001, now);
+      output.gain.exponentialRampToValueAtTime(0.17, now + 0.045);
+      output.gain.exponentialRampToValueAtTime(0.0001, now + 0.82);
+      output.connect(context.destination);
+
+      for (const [ratio, amount] of [[1, 0.8], [2.03, 0.23], [3.1, 0.09]]) {
+        const oscillator = context.createOscillator();
+        const gain = context.createGain();
+        oscillator.type = ratio === 1 ? "sawtooth" : "sine";
+        oscillator.frequency.setValueAtTime(440 * ratio, now);
+        oscillator.frequency.exponentialRampToValueAtTime(610 * ratio, now + 0.17);
+        oscillator.frequency.exponentialRampToValueAtTime(330 * ratio, now + 0.78);
+        gain.gain.value = amount;
+        oscillator.connect(gain).connect(output);
+        oscillator.start(now);
+        oscillator.stop(now + 0.85);
+      }
+      headPivot.rotation.x = 0.13;
+      updateMood("Chatty", 82);
+      showToast("Miso says hello");
+    }
+
+    function releaseHearts() {
+      hearts.forEach((heart, index) => {
+        heart.visible = true;
+        heart.material.opacity = 1;
+        heart.position.set(
+          (Math.random() - 0.5) * 0.8,
+          1.9 + Math.random() * 0.25,
+          1.08 + Math.random() * 0.25
+        );
+        heart.rotation.set(0, 0, (Math.random() - 0.5) * 0.8);
+        heart.userData.start = performance.now() / 1000 + index * 0.055;
+        heart.userData.drift = (Math.random() - 0.5) * 0.35;
+      });
+    }
+
+    function petCat() {
+      petStart = performance.now() / 1000;
+      targetPetEnergy = 1;
+      lastInteraction = performance.now();
+      updateMood("Purring", Math.min(100, moodValue + 14));
+      releaseHearts();
+      playPurr();
+      showToast("Miso leans into your hand");
+      window.setTimeout(() => {
+        targetPetEnergy = 0;
+        if (!toyActive) updateMood("Content", 88);
+      }, 1300);
+    }
+
+    function offerTreat() {
+      if (performance.now() / 1000 - treatStart < 3.8) return;
+      treatStart = performance.now() / 1000;
+      treat.visible = true;
+      lastInteraction = performance.now();
+      updateMood("Very interested", 96);
+      showToast("Chicken bite incoming");
+      window.setTimeout(() => {
+        treat.visible = false;
+        if (!toyActive) updateMood("Satisfied", 92);
+        if (soundEnabled) playPurr();
+      }, 3300);
+    }
+
+    function setPointer(event) {
+      pointer.x = (event.clientX / window.innerWidth) * 2 - 1;
+      pointer.y = -(event.clientY / window.innerHeight) * 2 + 1;
+      raycaster.setFromCamera(pointer, camera);
+      raycaster.ray.intersectPlane(floorPlane, floorHit);
+      if (toyActive) {
+        floorHit.x = THREE.MathUtils.clamp(floorHit.x, -2.5, 2.5);
+        floorHit.z = THREE.MathUtils.clamp(floorHit.z, -2.15, 2.4);
+        laserDot.position.set(floorHit.x, 0.019, floorHit.z);
+        laserGlow.position.set(floorHit.x, 0.08, floorHit.z);
+      }
+    }
+
+    function toggleToy(force) {
+      toyActive = force ?? !toyActive;
+      document.querySelector("#toyButton").setAttribute("aria-pressed", String(toyActive));
+      canvas.classList.toggle("toy-active", toyActive);
+      laserDot.visible = toyActive;
+      laserGlow.visible = toyActive;
+      if (toyActive) {
+        updateMood("Hunting", 91);
+        showToast("Move the light across the rug");
+      } else {
+        updateMood("Curious", 74);
+      }
+      lastInteraction = performance.now();
+    }
+
+    function updateCoat(name) {
+      activePreset = coatPresets[name];
+      coatMaterials.forEach((material) => {
+        if (material === furHaloMaterial) {
+          material.color.set(activePreset.light);
+        } else if (material === cheekMaterial) {
+          material.color.set(activePreset.light);
+        } else {
+          if (material.map) material.map.dispose();
+          if (material.bumpMap) material.bumpMap.dispose();
+          material.color.set(activePreset.base);
+          material.map = createFurTexture(activePreset);
+          material.bumpMap = createFurTexture(activePreset);
+          material.needsUpdate = true;
+        }
+      });
+      chestMaterials.forEach((material) => material.color.set(activePreset.chest));
+      stripeMaterials.forEach((material) => material.color.set(activePreset.stripe));
+      eyeIrisMaterials.forEach((material) => material.color.set(activePreset.eye));
+      noseMaterials.forEach((material) => material.color.set(activePreset.nose));
+      showToast(`${name[0].toUpperCase()}${name.slice(1)} coat selected`);
+    }
+
+    canvas.addEventListener("pointerdown", (event) => {
+      pointerDown = true;
+      pointerMoved = false;
+      downPosition = { x: event.clientX, y: event.clientY };
+      setPointer(event);
+    });
+
+    canvas.addEventListener("pointermove", (event) => {
+      setPointer(event);
+      if (pointerDown && Math.hypot(event.clientX - downPosition.x, event.clientY - downPosition.y) > 6) {
+        pointerMoved = true;
+      }
+    });
+
+    canvas.addEventListener("pointerup", (event) => {
+      setPointer(event);
+      if (!pointerMoved && !toyActive) {
+        const hit = raycaster.intersectObjects(interactables, false)[0];
+        if (hit) petCat();
+      }
+      pointerDown = false;
+    });
+
+    canvas.addEventListener("pointerleave", () => {
+      pointerDown = false;
+    });
+
+    document.querySelector("#petButton").addEventListener("click", petCat);
+    document.querySelector("#treatButton").addEventListener("click", offerTreat);
+    document.querySelector("#toyButton").addEventListener("click", () => toggleToy());
+    document.querySelector("#meowButton").addEventListener("click", playMeow);
+    document.querySelector("#coatSelect").addEventListener("change", (event) => updateCoat(event.target.value));
+    document.querySelector("#soundButton").addEventListener("click", (event) => {
+      soundEnabled = !soundEnabled;
+      event.currentTarget.setAttribute("aria-pressed", String(soundEnabled));
+      event.currentTarget.querySelectorAll(".sound-wave").forEach((path) => {
+        path.style.display = soundEnabled ? "" : "none";
+      });
+      showToast(soundEnabled ? "Sound on" : "Sound muted");
+    });
+
+    let firstInteraction = false;
+    window.addEventListener("pointerdown", () => {
+      if (!firstInteraction) {
+        firstInteraction = true;
+        hint.classList.add("hidden");
+      }
+    }, { once: true });
+
+    const clock = new THREE.Clock();
+    const targetLook = new THREE.Vector3();
+    const catWorld = new THREE.Vector3();
+    const tempEuler = new THREE.Euler();
+
+    function easeOutCubic(value) {
+      return 1 - Math.pow(1 - Math.min(Math.max(value, 0), 1), 3);
+    }
+
+    function animate() {
+      const delta = Math.min(clock.getDelta(), 0.05);
+      const elapsed = clock.elapsedTime;
+      const motionScale = reduceMotion ? 0.2 : 1;
+
+      controls.update();
+
+      const breath = Math.sin(elapsed * 2.1) * 0.012 * motionScale;
+      body.scale.y = 0.84 + breath;
+      chest.scale.y = 0.77 + breath * 1.5;
+      bodyGroup.position.y = Math.sin(elapsed * 2.1) * 0.005 * motionScale;
+
+      petEnergy = THREE.MathUtils.damp(petEnergy, targetPetEnergy, 5, delta);
+      const petWave = Math.sin((elapsed - petStart) * 7) * petEnergy;
+
+      const lookX = toyActive ? laserDot.position.x * 0.15 : pointer.x * 0.19;
+      const lookY = toyActive ? (laserDot.position.z - 0.8) * 0.1 : pointer.y * 0.09;
+      headPivot.rotation.y = THREE.MathUtils.damp(
+        headPivot.rotation.y,
+        lookX + petWave * 0.04,
+        3.4,
+        delta
+      );
+      headPivot.rotation.x = THREE.MathUtils.damp(
+        headPivot.rotation.x,
+        -lookY + petEnergy * 0.12,
+        3.4,
+        delta
+      );
+      headPivot.rotation.z = THREE.MathUtils.damp(
+        headPivot.rotation.z,
+        petEnergy * 0.13 + Math.sin(elapsed * 0.6) * 0.012,
+        3,
+        delta
+      );
+
+      const eyeTrackX = THREE.MathUtils.clamp(lookX * 0.16, -0.025, 0.025);
+      const eyeTrackY = THREE.MathUtils.clamp(-lookY * 0.12, -0.018, 0.018);
+      [eyeL, eyeR].forEach((eye) => {
+        eye.iris.position.x = eyeTrackX;
+        eye.iris.position.y = eyeTrackY;
+        eye.pupil.position.x = eyeTrackX;
+        eye.pupil.position.y = eyeTrackY;
+      });
+
+      if (elapsed > nextBlink) {
+        blinkStart = elapsed;
+        nextBlink = elapsed + 2.8 + Math.random() * 4.6;
+      }
+      const blinkTime = elapsed - blinkStart;
+      const blinkAmount = blinkTime < 0.22
+        ? Math.sin((blinkTime / 0.22) * Math.PI)
+        : 0;
+      const eyeScaleY = Math.max(0.08, 1 - blinkAmount * 0.94);
+      eyeL.group.scale.y = eyeScaleY;
+      eyeR.group.scale.y = eyeScaleY;
+
+      earL.rotation.z = -0.19 + Math.sin(elapsed * 0.78) * 0.018;
+      earR.rotation.z = 0.19 - Math.sin(elapsed * 0.7 + 1.1) * 0.02;
+      if (toyActive) {
+        earL.rotation.x = Math.sin(elapsed * 5.1) * 0.04;
+        earR.rotation.x = Math.sin(elapsed * 4.7 + 1.8) * 0.04;
+      } else {
+        earL.rotation.x = 0;
+        earR.rotation.x = 0;
+      }
+
+      tailPivots.forEach((pivot, index) => {
+        const falloff = index / tailPivots.length;
+        pivot.rotation.z =
+          (index < 3 ? 0.32 : -0.04) +
+          Math.sin(elapsed * 1.45 - index * 0.32) * (0.045 + falloff * 0.09) * motionScale;
+        pivot.rotation.x =
+          (index < 2 ? -0.22 : 0.06) +
+          Math.sin(elapsed * 1.1 + index * 0.2) * 0.025 * motionScale;
+      });
+
+      const treatAge = elapsed - treatStart;
+      if (treatAge >= 0 && treatAge < 3.3) {
+        if (treatAge < 1.05) {
+          const p = easeOutCubic(treatAge / 1.05);
+          const start = new THREE.Vector3(2.8, 3.4, 3.5);
+          const end = new THREE.Vector3(0, 1.44, 1.53);
+          treat.position.lerpVectors(start, end, p);
+          treat.position.y += Math.sin(p * Math.PI) * 0.7;
+          treat.rotation.x += delta * 7;
+          treat.rotation.y += delta * 4;
+        } else {
+          treat.position.set(0, 1.43, 1.52);
+          treat.scale.setScalar(Math.max(0.02, 1 - (treatAge - 1.05) / 0.65));
+        }
+        headPivot.rotation.x -= Math.sin(Math.min(treatAge, 1) * Math.PI) * 0.04;
+      } else {
+        treat.scale.setScalar(1);
+      }
+
+      if (toyActive) {
+        if (elapsed > nextSwat) {
+          swatStart = elapsed;
+          nextSwat = elapsed + 2.2 + Math.random() * 2.2;
+        }
+        const swatAge = elapsed - swatStart;
+        const swat = swatAge < 0.58 ? Math.sin((swatAge / 0.58) * Math.PI) : 0;
+        const swattingRight = laserDot.position.x > 0;
+        const activeLeg = swattingRight ? frontLegR : frontLegL;
+        activeLeg.rotation.x = -swat * 0.82;
+        activeLeg.rotation.z = (swattingRight ? -1 : 1) * swat * 0.23;
+        const inactiveLeg = swattingRight ? frontLegL : frontLegR;
+        inactiveLeg.rotation.x = THREE.MathUtils.damp(inactiveLeg.rotation.x, 0, 8, delta);
+        inactiveLeg.rotation.z = THREE.MathUtils.damp(inactiveLeg.rotation.z, 0, 8, delta);
+      } else {
+        [frontLegL, frontLegR].forEach((leg) => {
+          leg.rotation.x = THREE.MathUtils.damp(leg.rotation.x, 0, 8, delta);
+          leg.rotation.z = THREE.MathUtils.damp(leg.rotation.z, 0, 8, delta);
+        });
+      }
+
+      hearts.forEach((heart, index) => {
+        if (!heart.visible) return;
+        const age = elapsed - heart.userData.start;
+        if (age < 0) return;
+        heart.position.y += delta * (0.52 + index * 0.025);
+        heart.position.x += delta * heart.userData.drift;
+        heart.lookAt(camera.position);
+        heart.rotation.z += delta * 0.7;
+        heart.material.opacity = Math.max(0, 1 - age / 1.35);
+        if (age > 1.35) heart.visible = false;
+      });
+
+      if (performance.now() - lastInteraction > 15000 && !toyActive) {
+        updateMood("Relaxed", 72);
+        lastInteraction = performance.now();
+      }
+
+      renderer.render(scene, camera);
+      requestAnimationFrame(animate);
+    }
+
+    function onResize() {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      frameScene();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    }
+    window.addEventListener("resize", onResize);
+
+    const themeObserver = new MutationObserver(() => {
+      const currentCss = getComputedStyle(document.documentElement);
+      const currentColor = (name) => currentCss.getPropertyValue(name).trim();
+      scene.background.set(currentColor("--cp-bg"));
+      scene.fog.color.set(currentColor("--cp-bg"));
+      floorMaterial.color.set(currentColor("--cp-bg-elevated"));
+      rug.material.color.set(currentColor("--cp-surface-soft"));
+      ring.material.color.set(currentColor("--cp-border"));
+      laserMaterial.color.set(currentColor("--cp-danger"));
+      laserGlow.color.set(currentColor("--cp-danger"));
+      hearts.forEach((heart) => heart.material.color.set(currentColor("--cp-accent")));
+    });
+    themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+
+    requestAnimationFrame(() => {
+      loader.classList.add("done");
+      window.setTimeout(() => loader.remove(), 520);
+    });
+    animate();
+  </script>
+</body>
+</html>
