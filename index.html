@@ -4,10 +4,10 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="color-scheme" content="dark light">
-<title>Cat Benchmarks · One prompt, six AI-built 3D cats</title>
-<meta name="description" content="The same one-shot prompt given to six AI models at maximum reasoning: build a realistic interactive 3D cat in three.js. Watch every cat in action and see scores, AI credit cost, tool and build method.">
-<meta property="og:title" content="Cat Benchmarks – one prompt, six AI-built 3D cats">
-<meta property="og:description" content="Six models, one prompt, one realistic interactive 3D cat each. Watch them in action, with scores, credit cost and build method.">
+<title>Cat Benchmarks · One prompt, seven AI-built 3D cats</title>
+<meta name="description" content="The same one-shot prompt given to seven AI models at maximum reasoning: build a realistic interactive 3D cat in three.js. Watch every cat in action and see scores, AI credit cost, tool and build method.">
+<meta property="og:title" content="Cat Benchmarks – one prompt, seven AI-built 3D cats">
+<meta property="og:description" content="Seven models, one prompt, one realistic interactive 3D cat each. Watch them in action, with scores, credit cost and build method.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://ryanbowie.github.io/cat-benchmarks/">
 <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2028%2028'%3E%3Crect%20width='28'%20height='28'%20rx='7'%20fill='%237653ae'/%3E%3Cpath%20d='M7%2021V9l5%204h4l5-4v12z'%20fill='%23fff'/%3E%3C/svg%3E">
@@ -216,7 +216,7 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:12px 28px;justify-content:space-bet
   <div class="hero">
     <div class="wrap">
       <span class="eyebrow">A bit of fun · single-prompt benchmark</span>
-      <h1>One prompt. Six models. <span>Six cats.</span></h1>
+      <h1>One prompt. Seven models. <span>Seven cats.</span></h1>
       <p class="lead">Every model got the exact same instruction at its highest reasoning setting, with no local files and no previous context. Pet them, poke them, and see how they score.</p>
       <div class="terminal" role="img" aria-label="The prompt given to every model">
         <div class="bar"><i></i><i></i><i></i><b>prompt.txt</b></div>
@@ -285,7 +285,7 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:12px 28px;justify-content:space-bet
         </div>
         <div class="panel">
           <h3><span class="dot" style="background:var(--cowork)"></span>Microsoft Cowork</h3>
-          <p class="muted">One cat. Claude Opus 5.5 was tested in Microsoft Cowork rather than GitHub Copilot, and delivered a single self-contained HTML file.</p>
+          <p class="muted">Two cats. Claude Opus 5.5 and GPT-5.5 were tested in Microsoft Cowork rather than the GitHub Copilot app, and each delivered a single self-contained HTML file.</p>
           <div class="flow"><span>Prompt</span><i>→</i><span>Single HTML file</span><i>→</i><span>Done</span></div>
           <p class="small muted">Different harness, different tools, so treat the credit comparison as indicative only.</p>
         </div>
@@ -338,6 +338,8 @@ const CATS = [
     how:'One HTML file with its own copy of three.js, with no network needed.' },
   { id:'gemini-4-argon',    name:'Gemini 4 Argon',    vendor:'Google',    tool:'copilot', credits:252,  kb:136, build:'Single HTML file', three:'three r164 · CDN',
     how:'Iterated in place on one HTML file, refining it over many passes.' },
+  { id:'gpt-5.5',           name:'GPT-5.5',           vendor:'OpenAI',    tool:'cowork',  credits:105,  kb:36,  build:'Single HTML file', three:'three r160 · CDN',
+    how:'Delivered from Copilot Cowork as one compact, self-contained page: the leanest and cheapest run of the set.' },
   { id:'gpt-5.6-sol',       name:'GPT-5.6 Sol',       vendor:'OpenAI',    tool:'copilot', credits:201,  kb:50,  build:'Single HTML file', three:'three r170 · CDN',
     how:'The leanest page of the lot, with Miso the cat in about 50 KB.' },
   { id:'gpt-6.1-sol',       name:'GPT-6.1 Sol',       vendor:'OpenAI',    tool:'copilot', credits:179,  kb:622, build:'Vite project → bundled', three:'three · bundled',
@@ -367,6 +369,7 @@ const SCORES = {
   'claude-sonnet-5.5': {anatomy:5.6, fur:5.2, face:5.6, anim:5.2, inter:5.6, scene:5.8, perf:5.2},
   'grok-4.7':          {anatomy:2.0, fur:1.4, face:2.3, anim:2.6, inter:3.2, scene:2.6, perf:4.1},
   'gemini-4-argon':    {anatomy:0.9, fur:1.7, face:1.4, anim:2.3, inter:4.5, scene:3.2, perf:2.8},
+  'gpt-5.5':           {anatomy:3.0, fur:2.8, face:2.5, anim:3.5, inter:3.5, scene:4.8, perf:5.0},
   'gpt-5.6-sol':       {anatomy:1.2, fur:0.8, face:1.5, anim:2.0, inter:2.4, scene:2.0, perf:3.9},
   'gpt-6.1-sol':       {anatomy:5.0, fur:4.8, face:4.6, anim:4.4, inter:4.8, scene:6.0, perf:5.6}
 };
