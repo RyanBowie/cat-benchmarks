@@ -4,10 +4,10 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="color-scheme" content="dark light">
-<title>Cat Benchmarks · One prompt, seven AI-built 3D cats</title>
-<meta name="description" content="The same one-shot prompt given to seven AI models at maximum reasoning: build a realistic interactive 3D cat in three.js. Play with every cat and compare AI credit cost, tool and build method.">
-<meta property="og:title" content="Cat Benchmarks – one prompt, seven AI-built 3D cats">
-<meta property="og:description" content="Seven models, one prompt, one realistic interactive 3D cat each. Compare them live, with credit cost and build method.">
+<title>Cat Benchmarks · One prompt, six AI-built 3D cats</title>
+<meta name="description" content="The same one-shot prompt given to six AI models at maximum reasoning: build a realistic interactive 3D cat in three.js. Play with every cat and compare AI credit cost, tool and build method.">
+<meta property="og:title" content="Cat Benchmarks – one prompt, six AI-built 3D cats">
+<meta property="og:description" content="Six models, one prompt, one realistic interactive 3D cat each. Compare them live, with credit cost and build method.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://ryanbowie.github.io/cat-benchmarks/">
 <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2028%2028'%3E%3Crect%20width='28'%20height='28'%20rx='7'%20fill='%237653ae'/%3E%3Cpath%20d='M7%2021V9l5%204h4l5-4v12z'%20fill='%23fff'/%3E%3C/svg%3E">
@@ -234,7 +234,7 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:12px 28px;justify-content:space-bet
   <div class="hero">
     <div class="wrap">
       <span class="eyebrow">A bit of fun · single-prompt benchmark</span>
-      <h1>One prompt. Seven models. <span>Seven cats.</span></h1>
+      <h1>One prompt. Six models. <span>Six cats.</span></h1>
       <p class="lead">Every model got the exact same instruction at its highest reasoning setting, with no local files and no previous context. Pet them, poke them, and see how they score.</p>
       <div class="terminal" role="img" aria-label="The prompt given to every model">
         <div class="bar"><i></i><i></i><i></i><b>prompt.txt</b></div>
@@ -247,13 +247,13 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:12px 28px;justify-content:space-bet
   <section id="scores">
     <div class="wrap">
       <h2>The scoreboard</h2>
-      <p class="sub">Each cat is scored 0–10 across eight weighted criteria. Nothing has earned a 10: that would be a cat you could mistake for a live one on a screen. Click a row to jump to that cat.</p>
+      <p class="sub">Each cat is scored 0–10 across seven weighted criteria. Scoring is deliberately harsh and nothing has reached 7 yet, and a 10 would be a cat you could mistake for a live one on a screen. Click a row to jump to that cat.</p>
       <div class="lb" id="lb"></div>
       <div class="heat-wrap"><table class="heat" id="heat"></table></div>
-      <div class="scale"><span><b>0–2</b> missing or broken</span><span><b>3–4</b> crude</span><span><b>5–6</b> recognisably a cat</span><span><b>7–8</b> convincing</span><span><b>9–10</b> near-photoreal / flawless</span></div>
+      <div class="scale"><span><b>0–2</b> missing or broken</span><span><b>3–4</b> crude</span><span><b>5–6</b> recognisably a cat</span><span><b>7–10</b> convincing to near-photoreal (not reached yet)</span></div>
       <h3 style="margin:30px 0 0">The matrix</h3>
       <div class="rubric" id="rubric"></div>
-      <p class="note"><b>Provisional scores.</b> First-pass judgement from each cat's poster render and feature set (controls, behaviours, audio features), by one reviewer, one run per model. Edit the <code>SCORES</code> table in <code>index.html</code> to change them and everything recalculates.</p>
+      <p class="note"><b>Provisional scores.</b> First-pass judgement from each cat's poster render and feature set (controls and behaviours), by one reviewer, one run per model. Edit the <code>SCORES</code> table in <code>index.html</code> to change them and everything recalculates.</p>
     </div>
   </section>
 
@@ -310,7 +310,7 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:12px 28px;justify-content:space-bet
       <div class="method">
         <div class="panel">
           <h3><span class="dot" style="background:var(--copilot)"></span>GitHub Copilot app</h3>
-          <p class="muted">          Six cats. Each model ran in its own fresh GitHub Copilot session at its highest available reasoning effort.</p>
+          <p class="muted">          Five cats. Each model ran in its own fresh GitHub Copilot session at its highest available reasoning effort.</p>
                     <div class="flow"><span>Prompt</span><i>→</i><span>Plan</span><i>→</i><span>Write code</span><i>→</i><span>Build / bundle</span></div>
           <p class="small muted">Copilot sessions can run the shell, so several models set up a project and bundled it into one HTML file.</p>
         </div>
@@ -326,7 +326,7 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:12px 28px;justify-content:space-bet
             <li>Identical prompt every time.</li>
             <li>Highest reasoning setting for every model.</li>
             <li>No hand edits: each page is published exactly as the model produced it.</li>
-            <li>Credits as reported by the tool for that session. MAI-Code-2-Flash was not reported.</li>
+            <li>Credits as reported by the tool for that session.</li>
           </ul>
         </div>
       </div>
@@ -357,9 +357,7 @@ const CATS = [
   { id:'gpt-5.6-sol',       name:'GPT-5.6 Sol',       vendor:'OpenAI',    tool:'copilot', credits:201,  kb:50,  build:'Single HTML file', three:'three r170 · CDN',
     how:'The leanest page of the lot, with Miso the cat in about 50 KB.' },
   { id:'gpt-6.1-sol',       name:'GPT-6.1 Sol',       vendor:'OpenAI',    tool:'copilot', credits:179,  kb:622, build:'Vite project → bundled', three:'three · bundled',
-    how:'Built as a Vite project (cat, audio, UI modules) and bundled into one file named Miso.' },
-  { id:'mai-code-2-flash',  name:'MAI-Code-2-Flash',  vendor:'Microsoft', tool:'copilot', credits:null, kb:613, build:'esbuild project → bundled', three:'three · bundled',
-    how:'A small esbuild project that bundles a 38 KB source into a single page. Credit cost was not reported.' }
+    how:'Built as a Vite project (cat, audio, UI modules) and bundled into one file named Miso.' }
 ];
 const known = CATS.filter(c=>c.credits!=null);
 const maxC = Math.max(...known.map(c=>c.credits));
@@ -372,23 +370,21 @@ const cheap = known.reduce((a,c)=>c.credits<a.credits?c:a), dear = known.reduce(
 
 /* scoring matrix: weights sum to 100 */
 const CRITERIA = [
-  {k:'anatomy', n:'Anatomy & proportions', w:20, d:'Believable body, head, limbs, tail and posture. Reads as a real cat from every orbit angle.'},
+  {k:'anatomy', n:'Anatomy & proportions', w:25, d:'Believable body, head, limbs, tail and posture. Reads as a real cat from every orbit angle.'},
   {k:'fur',     n:'Fur & materials',       w:15, d:'Coat patterns, fur or fuzz, shading and lighting on skin, nose, ears and whiskers.'},
   {k:'face',    n:'Face & eyes',           w:10, d:'Expressive eyes with slit pupils and a convincing nose, mouth and whiskers.'},
   {k:'anim',    n:'Animation & behaviour', w:15, d:'Idle breathing, blinking, tail and ear motion, poses, and reactions that feel alive.'},
   {k:'inter',   n:'Interactivity',         w:15, d:'Petting, toys, camera control and depth of things to do, all working smoothly.'},
   {k:'scene',   n:'Scene & polish',        w:10, d:'Lighting, environment, UI design, layout and overall finish.'},
-  {k:'perf',    n:'Performance & robustness', w:10, d:'Smooth frame rate, quick load, no errors, works across window sizes.'},
-  {k:'audio',   n:'Audio & delight',       w:5,  d:'Procedural purr or meow, charm and the small touches that make you smile.'}
+  {k:'perf',    n:'Performance & robustness', w:10, d:'Smooth frame rate, quick load, no errors, works across window sizes.'}
 ];
 const SCORES = {
-  'claude-opus-5.5':   {anatomy:7.8, fur:8.6, face:7.6, anim:7.8, inter:8.4, scene:8.0, perf:7.2, audio:8.0},
-  'claude-sonnet-5.5': {anatomy:8.0, fur:7.8, face:8.0, anim:7.6, inter:8.0, scene:8.2, perf:7.5, audio:7.0},
-  'grok-4.7':          {anatomy:4.5, fur:3.5, face:5.0, anim:5.5, inter:6.5, scene:5.5, perf:8.0, audio:5.5},
-  'gemini-4-argon':    {anatomy:2.5, fur:4.0, face:3.5, anim:5.0, inter:8.5, scene:6.5, perf:6.0, audio:6.0},
-  'gpt-5.6-sol':       {anatomy:3.5, fur:2.5, face:4.0, anim:5.0, inter:6.0, scene:5.0, perf:8.5, audio:5.0},
-  'gpt-6.1-sol':       {anatomy:7.2, fur:7.0, face:6.8, anim:6.8, inter:7.0, scene:8.6, perf:8.0, audio:6.0},
-  'mai-code-2-flash':  {anatomy:3.0, fur:2.5, face:3.5, anim:4.5, inter:4.5, scene:6.0, perf:7.5, audio:4.5}
+  'claude-opus-5.5':   {anatomy:5.5, fur:6.0, face:5.4, anim:5.4, inter:6.0, scene:5.6, perf:5.0},
+  'claude-sonnet-5.5': {anatomy:5.6, fur:5.2, face:5.6, anim:5.2, inter:5.6, scene:5.8, perf:5.2},
+  'grok-4.7':          {anatomy:2.0, fur:1.4, face:2.3, anim:2.6, inter:3.2, scene:2.6, perf:4.1},
+  'gemini-4-argon':    {anatomy:0.9, fur:1.7, face:1.4, anim:2.3, inter:4.5, scene:3.2, perf:2.8},
+  'gpt-5.6-sol':       {anatomy:1.2, fur:0.8, face:1.5, anim:2.0, inter:2.4, scene:2.0, perf:3.9},
+  'gpt-6.1-sol':       {anatomy:5.0, fur:4.8, face:4.6, anim:4.4, inter:4.8, scene:6.0, perf:5.6}
 };
 
 const ranked = CATS.map(c=>({...c, sc:SCORES[c.id], total:CRITERIA.reduce((a,x)=>a+SCORES[c.id][x.k]*x.w,0)/100}))
