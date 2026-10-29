@@ -1,72 +1,438 @@
 <!doctype html>
-<html lang="en">
+<html lang="en-GB" data-theme="dark">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Cat Benchmarks – one prompt, many models</title>
+<meta name="color-scheme" content="dark light">
+<title>Cat Benchmarks · One prompt, seven AI-built 3D cats</title>
+<meta name="description" content="The same one-shot prompt given to seven AI models at maximum reasoning: build a realistic interactive 3D cat in three.js. Play with every cat and compare AI credit cost, tool and build method.">
+<meta property="og:title" content="Cat Benchmarks – one prompt, seven AI-built 3D cats">
+<meta property="og:description" content="Seven models, one prompt, one realistic interactive 3D cat each. Compare them live, with credit cost and build method.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://ryanbowie.github.io/cat-benchmarks/">
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2028%2028'%3E%3Crect%20width='28'%20height='28'%20rx='7'%20fill='%237653ae'/%3E%3Cpath%20d='M7%2021V9l5%204h4l5-4v12z'%20fill='%23fff'/%3E%3C/svg%3E">
+<script>
+  (() => {
+    const root = document.documentElement;
+    root.classList.add("js");
+    try { const s = localStorage.getItem("cb-theme"); if (s === "light" || s === "dark") root.setAttribute("data-theme", s); } catch (e) {}
+  })();
+</script>
 <style>
-  :root { color-scheme: dark; --bg:#0f1117; --card:#181b24; --line:#2a2f3d; --fg:#e8eaf0; --mut:#9aa1b3; --acc:#ffb454; }
-  * { box-sizing: border-box; }
-  body { margin:0; font:16px/1.5 system-ui,Segoe UI,sans-serif; background:var(--bg); color:var(--fg); }
-  header { max-width:1100px; margin:0 auto; padding:48px 20px 12px; }
-  h1 { margin:0 0 8px; font-size:2.2rem; }
-  h1 span { color:var(--acc); }
-  p.lead { color:var(--mut); max-width:760px; margin:0 0 20px; }
-  blockquote { margin:0 0 12px; padding:14px 18px; background:var(--card); border-left:4px solid var(--acc); border-radius:6px; font-style:italic; }
-  .note { color:var(--mut); font-size:.9rem; }
-  main { max-width:1100px; margin:0 auto; padding:16px 20px 60px; display:grid; gap:20px; grid-template-columns:repeat(auto-fill,minmax(320px,1fr)); }
-  .card { background:var(--card); border:1px solid var(--line); border-radius:12px; overflow:hidden; display:flex; flex-direction:column; }
-  .card .frame { position:relative; aspect-ratio:4/3; background:#000; }
-  .card iframe { position:absolute; inset:0; width:100%; height:100%; border:0; }
-  .card .ph { position:absolute; inset:0; display:grid; place-items:center; }
-  .card button { background:var(--acc); color:#1a1200; border:0; border-radius:999px; padding:10px 20px; font-weight:700; cursor:pointer; }
-  .card .meta { padding:14px 16px 16px; display:flex; flex-direction:column; gap:6px; }
-  .card h2 { margin:0; font-size:1.15rem; }
-  .row { display:flex; justify-content:space-between; align-items:center; gap:8px; color:var(--mut); font-size:.9rem; }
-  .tag { background:#262b3a; border-radius:999px; padding:2px 10px; font-size:.8rem; }
-  a { color:var(--acc); }
-  footer { text-align:center; color:var(--mut); padding:0 20px 40px; font-size:.85rem; }
+:root {
+  color-scheme: light;
+  --bg:#f2f2f8; --bg2:#f8f7fc; --surface:#fff; --soft:#f2f2f8; --border:#e3dfed; --border-strong:#9285aa;
+  --text:#102631; --muted:#52637a; --accent:#7653ae; --accent-hover:#58378b; --accent-soft:#eee8f7; --accent-fg:#fff;
+  --link:#066bc7; --panel:rgba(255,255,255,.9); --shadow:0 18px 48px rgba(0,0,0,.12);
+  --copilot:#0877dd; --cowork:#b535c3; --good:#207346; --warn:#8c6208;
+  --font:"Segoe UI",Aptos,Calibri,-apple-system,BlinkMacSystemFont,sans-serif; --mono:Consolas,"Courier New",monospace;
+  --header-h:3.5rem;
+}
+html[data-theme="dark"] {
+  color-scheme: dark;
+  --bg:#171717; --bg2:#222; --surface:#1f1f1f; --soft:#262626; --border:#3b3b3b; --border-strong:#858585;
+  --text:#f2f2f2; --muted:#bdbdbd; --accent:#c3a0ef; --accent-hover:#debeff; --accent-soft:#2b2b2b; --accent-fg:#181818;
+  --link:#80baff; --panel:rgba(31,31,31,.9); --shadow:0 18px 48px rgba(0,0,0,.4);
+  --copilot:#69aeff; --cowork:#ed8fea; --good:#4ade80; --warn:#fbbf24;
+}
+*,*::before,*::after{box-sizing:border-box}
+@media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+body{margin:0;background:var(--bg);color:var(--text);font:1rem/1.6 var(--font)}
+a{color:var(--link);text-underline-offset:2px}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+[hidden]{display:none!important}
+[id]{scroll-margin-top:calc(var(--header-h) + 12px)}
+h1,h2,h3{line-height:1.2;margin:0 0 12px}
+h1{font-size:clamp(2.1rem,5vw,3.4rem);letter-spacing:-.02em}
+h2{font-size:1.6rem}
+p{margin:0 0 12px}
+code{font-family:var(--mono);font-size:.9em;background:var(--soft);border:1px solid var(--border);border-radius:4px;padding:0 4px}
+.muted{color:var(--muted)} .small{font-size:.875rem}
+.wrap{max-width:1240px;margin:0 auto;padding:0 20px}
+
+/* header */
+.site-header{position:sticky;top:0;z-index:50;height:var(--header-h);background:var(--panel);backdrop-filter:blur(10px);border-bottom:1px solid var(--border)}
+.site-header .wrap{height:100%;display:flex;align-items:center;gap:14px}
+.brand{display:inline-flex;align-items:center;gap:10px;font-weight:700;color:var(--text);text-decoration:none}
+.brand svg{width:28px;height:28px}
+.nav{margin-left:auto;display:flex;gap:6px;align-items:center}
+.nav a.pill{padding:5px 12px;border:1px solid var(--border);border-radius:999px;background:var(--surface);color:var(--text);text-decoration:none;font-size:.85rem}
+.nav a.pill:hover{border-color:var(--border-strong)}
+.icon-btn{width:36px;height:36px;display:inline-grid;place-items:center;border:1px solid var(--border);border-radius:10px;background:var(--surface);color:var(--text);cursor:pointer}
+.icon-btn:hover{border-color:var(--border-strong)}
+@media(max-width:640px){.nav a.pill.hide-sm{display:none}}
+
+/* hero */
+.hero{position:relative;overflow:hidden;padding:56px 0 40px;border-bottom:1px solid var(--border);background:
+  radial-gradient(900px 400px at 85% -10%,color-mix(in srgb,var(--accent) 28%,transparent),transparent 70%),
+  radial-gradient(600px 300px at 0% 110%,color-mix(in srgb,var(--cowork) 16%,transparent),transparent 70%),var(--bg2)}
+.eyebrow{display:inline-block;font-size:.75rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);border:1px solid var(--border);background:var(--surface);border-radius:999px;padding:3px 12px;margin-bottom:16px}
+.hero h1 span{color:var(--accent)}
+.hero p.lead{max-width:760px;font-size:1.1rem;color:var(--muted)}
+.terminal{margin:24px 0 0;max-width:860px;background:#0d0d12;color:#e8e8f0;border:1px solid var(--border);border-radius:14px;box-shadow:var(--shadow);overflow:hidden}
+.terminal .bar{display:flex;gap:6px;align-items:center;padding:10px 14px;background:#191922;font:.75rem var(--mono);color:#9a9ab0}
+.terminal .bar i{width:10px;height:10px;border-radius:50%;display:inline-block}
+.terminal .bar i:nth-child(1){background:#ff5f57}.terminal .bar i:nth-child(2){background:#febc2e}.terminal .bar i:nth-child(3){background:#28c840}
+.terminal .bar b{margin-left:8px;font-weight:400}
+.terminal pre{margin:0;padding:18px 20px;font:1rem/1.6 var(--mono);white-space:pre-wrap;min-height:5.5em}
+.terminal .ps{color:#c3a0ef}
+.caret{display:inline-block;width:.6ch;height:1.1em;background:#c3a0ef;vertical-align:-.15em;animation:blink 1s steps(2) infinite}
+@keyframes blink{50%{opacity:0}}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-top:28px;max-width:860px}
+.stat{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:14px 16px}
+.stat b{display:block;font-size:1.8rem;line-height:1.1;color:var(--accent)}
+.stat span{font-size:.85rem;color:var(--muted)}
+
+/* sections */
+section{padding:48px 0 8px}
+section>.wrap>p.sub{color:var(--muted);max-width:760px}
+
+/* toolbar */
+.toolbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:18px 0 22px}
+.seg{display:inline-flex;border:1px solid var(--border);border-radius:999px;background:var(--surface);padding:3px}
+.seg button{border:0;background:transparent;color:var(--text);font:inherit;font-size:.85rem;padding:5px 14px;border-radius:999px;cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--accent);color:var(--accent-fg);font-weight:600}
+.toolbar label{font-size:.85rem;color:var(--muted);display:inline-flex;gap:6px;align-items:center}
+select{font:inherit;font-size:.85rem;color:var(--text);background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:5px 10px}
+.btn{font:inherit;font-size:.9rem;font-weight:600;border:1px solid var(--accent);background:var(--accent);color:var(--accent-fg);border-radius:999px;padding:7px 16px;cursor:pointer}
+.btn:hover{background:var(--accent-hover);border-color:var(--accent-hover)}
+.btn.ghost{background:transparent;color:var(--accent)}
+.btn.ghost:hover{background:var(--accent-soft)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.toolbar .spacer{margin-left:auto}
+
+/* credit chart */
+.chart{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:20px 22px;display:grid;gap:12px}
+.bar-row{display:grid;grid-template-columns:150px 1fr 92px;gap:12px;align-items:center;font-size:.9rem}
+.bar-row .name{font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.track{height:22px;background:var(--soft);border-radius:999px;overflow:hidden;position:relative}
+.fill{height:100%;width:0;border-radius:999px;background:linear-gradient(90deg,color-mix(in srgb,var(--c) 55%,transparent),var(--c));transition:width 1s cubic-bezier(.2,.8,.2,1)}
+.bar-row .val{text-align:right;font-variant-numeric:tabular-nums;color:var(--muted)}
+.legend{display:flex;flex-wrap:wrap;gap:16px;font-size:.85rem;color:var(--muted);margin-top:4px}
+.dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px;vertical-align:0}
+@media(max-width:560px){.bar-row{grid-template-columns:100px 1fr 64px}}
+
+/* cat cards */
+.grid{display:grid;gap:22px;grid-template-columns:repeat(auto-fill,minmax(340px,1fr))}
+.card{position:relative;display:flex;flex-direction:column;background:var(--surface);border:1px solid var(--border);border-radius:16px;overflow:hidden;box-shadow:0 0 2px rgba(0,0,0,.12),0 1px 2px rgba(0,0,0,.14);transition:transform .2s,border-color .2s,box-shadow .2s}
+.card:hover{transform:translateY(-3px);border-color:var(--border-strong);box-shadow:var(--shadow)}
+.card.picked{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent)}
+.frame{position:relative;aspect-ratio:4/3;background:radial-gradient(circle at 50% 40%,#2c2438,#0d0d12);overflow:hidden}
+.frame img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.frame iframe{position:absolute;inset:0;width:100%;height:100%;border:0;background:#000}
+.frame .play{position:absolute;inset:0;display:grid;place-items:center;border:0;cursor:pointer;background:linear-gradient(transparent 40%,rgba(0,0,0,.55));color:#fff;font:inherit}
+.frame .play span{display:inline-flex;align-items:center;gap:8px;background:var(--accent);color:var(--accent-fg);padding:9px 20px;border-radius:999px;font-weight:700;transition:transform .15s}
+.frame .play:hover span{transform:scale(1.07)}
+.rank{position:absolute;top:10px;left:10px;z-index:2;background:rgba(13,13,18,.78);color:#fff;border-radius:999px;padding:2px 10px;font-size:.78rem;font-weight:700;backdrop-filter:blur(6px)}
+.badge-fun{position:absolute;top:10px;right:10px;z-index:2;background:var(--accent);color:var(--accent-fg);border-radius:999px;padding:2px 10px;font-size:.78rem;font-weight:700}
+.meta{padding:16px 18px 18px;display:flex;flex-direction:column;gap:10px;flex:1}
+.meta h3{margin:0;font-size:1.25rem}
+.vendor{font-size:.8rem;color:var(--muted);margin-top:-6px}
+.tags{display:flex;flex-wrap:wrap;gap:6px}
+.tag{font-size:.75rem;border:1px solid var(--border);border-radius:999px;padding:1px 10px;background:var(--soft);color:var(--muted);white-space:nowrap}
+.tag.tool{color:var(--c);border-color:color-mix(in srgb,var(--c) 55%,transparent);background:color-mix(in srgb,var(--c) 12%,transparent);font-weight:600}
+.credits{display:flex;align-items:baseline;gap:8px}
+.credits b{font-size:1.7rem;line-height:1;font-variant-numeric:tabular-nums}
+.credits span{font-size:.85rem;color:var(--muted)}
+.paws{font-size:.9rem;letter-spacing:1px;min-height:1.3em}
+.how{font-size:.875rem;color:var(--muted);margin:0}
+.actions{margin-top:auto;display:flex;gap:8px;flex-wrap:wrap;padding-top:4px}
+.actions .btn{padding:5px 14px;font-size:.82rem}
+.actions label{display:inline-flex;gap:6px;align-items:center;font-size:.82rem;color:var(--muted);margin-left:auto;cursor:pointer}
+
+/* compare */
+.compare{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:8px}
+.compare .slot{background:var(--surface);border:1px solid var(--border);border-radius:16px;overflow:hidden}
+.compare .slot .head{padding:10px 14px;font-weight:600;display:flex;justify-content:space-between;gap:8px;border-bottom:1px solid var(--border)}
+.compare .slot .body{aspect-ratio:4/3;background:#0d0d12;display:grid;place-items:center;color:#9a9ab0;text-align:center;padding:20px}
+.compare iframe{width:100%;height:100%;border:0}
+@media(max-width:760px){.compare{grid-template-columns:1fr}}
+
+/* method */
+.method{display:grid;gap:18px;grid-template-columns:repeat(auto-fit,minmax(300px,1fr))}
+.panel{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:20px 22px}
+.panel h3{display:flex;gap:10px;align-items:center}
+.panel ul{margin:0;padding-left:20px}
+.flow{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:14px 0 4px;font-size:.85rem}
+.flow span{border:1px solid var(--border);background:var(--soft);padding:4px 12px;border-radius:10px}
+.flow i{font-style:normal;color:var(--muted)}
+
+/* modal */
+dialog{border:0;padding:0;background:transparent;max-width:none;max-height:none;width:100vw;height:100vh}
+dialog::backdrop{background:rgba(0,0,0,.8);backdrop-filter:blur(4px)}
+.modal{position:absolute;inset:3vh 3vw;display:flex;flex-direction:column;background:var(--surface);border:1px solid var(--border);border-radius:16px;overflow:hidden;box-shadow:var(--shadow)}
+.modal .head{display:flex;align-items:center;gap:12px;padding:10px 16px;border-bottom:1px solid var(--border)}
+.modal .head b{font-size:1.05rem}
+.modal .head .btn{margin-left:auto}
+.modal iframe{flex:1;border:0;width:100%;background:#000}
+
+footer{margin-top:56px;border-top:1px solid var(--border);padding:28px 0 48px;color:var(--muted);font-size:.9rem}
+footer .wrap{display:flex;flex-wrap:wrap;gap:12px 28px;justify-content:space-between}
+.visually-hidden{position:absolute!important;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 </style>
 </head>
 <body>
-<header>
-  <h1>🐱 Cat <span>Benchmarks</span></h1>
-  <p class="lead">The same single prompt given to several AI models, each at its highest reasoning setting. Every cat below was built from scratch, with no local files or previous session context. Click to load and play with each one.</p>
-  <blockquote>“Using no folder/local file context or previous session context Create a new realistic interactive 3d cat with three.js from scratch.”</blockquote>
-  <div class="note">All models ran in GitHub Copilot, except Claude Opus 5.5, which ran in Microsoft Cowork. Credits are the AI credits each session consumed. Pages load heavy WebGL, so they only start when you press Load.</div>
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="#top" aria-label="Cat Benchmarks home">
+      <svg viewBox="0 0 28 28" aria-hidden="true"><rect width="28" height="28" rx="7" fill="var(--accent)"/><path d="M7 21V9l5 4h4l5-4v12z" fill="var(--accent-fg)"/><circle cx="11.5" cy="16" r="1.2" fill="var(--accent)"/><circle cx="16.5" cy="16" r="1.2" fill="var(--accent)"/></svg>
+      <span>Cat Benchmarks</span>
+    </a>
+    <nav class="nav" aria-label="Page sections">
+      <a class="pill hide-sm" href="#cost">Credits</a>
+      <a class="pill" href="#cats">Cats</a>
+      <a class="pill hide-sm" href="#compare">Compare</a>
+      <a class="pill hide-sm" href="#method">Method</a>
+      <a class="pill" href="https://github.com/RyanBowie/cat-benchmarks" target="_blank" rel="noopener">GitHub ↗</a>
+      <button class="icon-btn" id="theme" aria-label="Toggle light / dark theme" title="Toggle theme">◐</button>
+    </nav>
+  </div>
 </header>
-<main id="grid"></main>
-<footer>Just a bit of fun. These are single-prompt, one-shot results, not a rigorous benchmark.</footer>
+
+<main id="top">
+  <div class="hero">
+    <div class="wrap">
+      <span class="eyebrow">A bit of fun · single-prompt benchmark</span>
+      <h1>One prompt. Seven models. <span>Seven cats.</span></h1>
+      <p class="lead">Every model got the exact same instruction at its highest reasoning setting, with no local files and no previous context. Pet them, poke them, and see what each one cost to build.</p>
+      <div class="terminal" role="img" aria-label="The prompt given to every model">
+        <div class="bar"><i></i><i></i><i></i><b>prompt.txt</b></div>
+        <pre><span class="ps">&gt;</span> <span id="typed"></span><span class="caret"></span></pre>
+      </div>
+      <div class="stats" id="stats"></div>
+    </div>
+  </div>
+
+  <section id="cost">
+    <div class="wrap">
+      <h2>What each cat cost</h2>
+      <p class="sub">AI credits consumed by the session that produced the cat. Lower is cheaper, not necessarily better, so judge the cats yourself below.</p>
+      <div class="chart" id="chart"></div>
+    </div>
+  </section>
+
+  <section id="cats">
+    <div class="wrap">
+      <h2>Meet the cats</h2>
+      <p class="sub">Previews are loaded on demand because each cat is a full WebGL scene. Hit <b>Play</b> to wake one up, or open it on the big stage.</p>
+      <div class="toolbar">
+        <div class="seg" role="group" aria-label="Filter by build tool" id="filter">
+          <button aria-pressed="true" data-f="all">All</button>
+          <button aria-pressed="false" data-f="copilot">GitHub Copilot</button>
+          <button aria-pressed="false" data-f="cowork">Cowork</button>
+        </div>
+        <label>Sort
+          <select id="sort">
+            <option value="credits-desc">Most credits first</option>
+            <option value="credits-asc">Fewest credits first</option>
+            <option value="name">Model name</option>
+            <option value="size">Largest file first</option>
+          </select>
+        </label>
+        <span class="spacer"></span>
+        <button class="btn ghost" id="stopall">Stop all previews</button>
+      </div>
+      <div class="grid" id="grid"></div>
+    </div>
+  </section>
+
+  <section id="compare">
+    <div class="wrap">
+      <h2>Head to head</h2>
+      <p class="sub">Tick <b>Compare</b> on any two cats above and they will appear side by side here.</p>
+      <div class="compare" id="cmp">
+        <div class="slot"><div class="head"><span id="cmpA">Cat A</span></div><div class="body" id="bodyA">Pick a first cat</div></div>
+        <div class="slot"><div class="head"><span id="cmpB">Cat B</span></div><div class="body" id="bodyB">Pick a second cat</div></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="method">
+    <div class="wrap">
+      <h2>How they were built</h2>
+      <div class="method">
+        <div class="panel">
+          <h3><span class="dot" style="background:var(--copilot)"></span>GitHub Copilot app</h3>
+          <p class="muted">          Six cats. Each model ran in its own fresh GitHub Copilot session at its highest available reasoning effort.</p>
+                    <div class="flow"><span>Prompt</span><i>→</i><span>Plan</span><i>→</i><span>Write code</span><i>→</i><span>Build / bundle</span></div>
+          <p class="small muted">Copilot sessions can run the shell, so several models set up a project and bundled it into one HTML file.</p>
+        </div>
+        <div class="panel">
+          <h3><span class="dot" style="background:var(--cowork)"></span>Microsoft Cowork</h3>
+          <p class="muted">One cat. Claude Opus 5.5 was tested in Microsoft Cowork rather than GitHub Copilot, and delivered a single self-contained HTML file.</p>
+          <div class="flow"><span>Prompt</span><i>→</i><span>Single HTML file</span><i>→</i><span>Done</span></div>
+          <p class="small muted">Different harness, different tools, so treat the credit comparison as indicative only.</p>
+        </div>
+        <div class="panel">
+          <h3>Ground rules</h3>
+          <ul>
+            <li>Identical prompt every time.</li>
+            <li>Highest reasoning setting for every model.</li>
+            <li>No hand edits: each page is published exactly as the model produced it.</li>
+            <li>Credits as reported by the tool for that session. MAI-Code-2-Flash was not reported.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>🐾 Just a bit of fun, not a rigorous benchmark. One run per model, so luck matters.</span>
+    <span><a href="https://github.com/RyanBowie/cat-benchmarks" target="_blank" rel="noopener">Source on GitHub</a> · Cats run three.js, some load it from jsDelivr.</span>
+  </div>
+</footer>
+
+<dialog id="stage">
+  <div class="modal">
+    <div class="head"><b id="stageTitle"></b><span class="tag" id="stageTag"></span><button class="btn ghost" id="stageClose">Close ✕</button></div>
+    <iframe id="stageFrame" title="Cat stage" allow="fullscreen; autoplay"></iframe>
+  </div>
+</dialog>
+
 <script>
-const cats = [
-  { id:'claude-opus-5.5',   name:'Claude Opus 5.5',  tool:'Microsoft Cowork', credits:'2,314' },
-  { id:'claude-sonnet-5.5', name:'Claude Sonnet 5.5', tool:'GitHub Copilot',   credits:'2,175' },
-  { id:'grok-4.7',          name:'Grok 4.7',          tool:'GitHub Copilot',   credits:'848' },
-  { id:'gemini-4-argon',    name:'Gemini 4 Argon',    tool:'GitHub Copilot',   credits:'252' },
-  { id:'gpt-5.6-sol',       name:'GPT-5.6 Sol',       tool:'GitHub Copilot',   credits:'201' },
-  { id:'gpt-6.1-sol',       name:'GPT-6.1 Sol',       tool:'GitHub Copilot',   credits:'179' },
-  { id:'mai-code-2-flash',  name:'MAI-Code-2-Flash',  tool:'GitHub Copilot',   credits:'Unknown' }
+const PROMPT = "Using no folder/local file context or previous session context Create a new realistic interactive 3d cat with three.js from scratch.";
+const TOOLS = { copilot:{label:'GitHub Copilot', c:'var(--copilot)'}, cowork:{label:'Microsoft Cowork', c:'var(--cowork)'} };
+const CATS = [
+  { id:'claude-opus-5.5',   name:'Claude Opus 5.5',   vendor:'Anthropic', tool:'cowork',  credits:2314, kb:132, build:'Single HTML file', three:'three r186 · CDN',
+    how:'Written as one self-contained page and delivered straight from Cowork.' },
+  { id:'claude-sonnet-5.5', name:'Claude Sonnet 5.5', vendor:'Anthropic', tool:'copilot', credits:2175, kb:682, build:'Modular project → bundled', three:'three · bundled',
+    how:'A real project: SDF body, fur, coat, eyes, rig, behaviour and audio modules, bundled into one file.' },
+  { id:'grok-4.7',          name:'Grok 4.7',          vendor:'xAI',       tool:'copilot', credits:848,  kb:68,  build:'Single HTML + vendored three', three:'three · local copy',
+    how:'One HTML file with its own copy of three.js, with no network needed.' },
+  { id:'gemini-4-argon',    name:'Gemini 4 Argon',    vendor:'Google',    tool:'copilot', credits:252,  kb:136, build:'Single HTML file', three:'three r164 · CDN',
+    how:'Iterated in place on one HTML file, refining it over many passes.' },
+  { id:'gpt-5.6-sol',       name:'GPT-5.6 Sol',       vendor:'OpenAI',    tool:'copilot', credits:201,  kb:50,  build:'Single HTML file', three:'three r170 · CDN',
+    how:'The leanest page of the lot, with Miso the cat in about 50 KB.' },
+  { id:'gpt-6.1-sol',       name:'GPT-6.1 Sol',       vendor:'OpenAI',    tool:'copilot', credits:179,  kb:622, build:'Vite project → bundled', three:'three · bundled',
+    how:'Cheapest cat. Built as a Vite project (cat, audio, UI modules) and bundled into one file named Miso.' },
+  { id:'mai-code-2-flash',  name:'MAI-Code-2-Flash',  vendor:'Microsoft', tool:'copilot', credits:null, kb:613, build:'esbuild project → bundled', three:'three · bundled',
+    how:'A small esbuild project that bundles a 38 KB source into a single page. Credit cost was not reported.' }
 ];
-const grid = document.getElementById('grid');
-for (const c of cats) {
-  const url = `cats/${c.id}/index.html`;
-  const el = document.createElement('article');
-  el.className = 'card';
-  el.innerHTML = `
-    <div class="frame"><div class="ph"><button>▶ Load cat</button></div></div>
-    <div class="meta">
-      <h2>${c.name}</h2>
-      <div class="row"><span class="tag">${c.tool}</span><span>${c.credits} credits</span></div>
-      <a href="${url}" target="_blank" rel="noopener">Open full screen ↗</a>
-    </div>`;
-  el.querySelector('button').onclick = () => {
-    const f = document.createElement('iframe');
-    f.src = url; f.title = c.name; f.allow = 'fullscreen; autoplay';
-    const frame = el.querySelector('.frame');
-    frame.innerHTML = ''; frame.appendChild(f);
-  };
-  grid.appendChild(el);
+const known = CATS.filter(c=>c.credits!=null);
+const maxC = Math.max(...known.map(c=>c.credits));
+const total = known.reduce((a,c)=>a+c.credits,0);
+const $ = s => document.querySelector(s);
+const url = c => `cats/${c.id}/index.html`;
+const fmt = n => n==null ? 'n/a' : n.toLocaleString('en-GB');
+const paws = c => c.credits==null ? '❔' : '🐾'.repeat(Math.max(1,Math.round(c.credits/450)));
+const cheap = known.reduce((a,c)=>c.credits<a.credits?c:a), dear = known.reduce((a,c)=>c.credits>a.credits?c:a);
+
+/* typed prompt */
+(function(){
+  const el=$('#typed'); const reduce=matchMedia('(prefers-reduced-motion:reduce)').matches;
+  if(reduce){el.textContent=PROMPT;return;}
+  let i=0; (function t(){el.textContent=PROMPT.slice(0,++i); if(i<PROMPT.length) setTimeout(t,22);})();
+})();
+
+/* stats */
+$('#stats').innerHTML = [
+  [CATS.length,'models tested'],
+  [fmt(total),'credits across all runs'],
+  [`${cheap.credits} → ${fmt(dear.credits)}`,'cheapest to priciest cat'],
+  [`${Math.round(dear.credits/cheap.credits)}×`,'cost gap, same prompt']
+].map(([b,s])=>`<div class="stat"><b>${b}</b><span>${s}</span></div>`).join('');
+
+/* chart */
+const sorted = [...CATS].sort((a,b)=>(b.credits??-1)-(a.credits??-1));
+$('#chart').innerHTML = sorted.map(c=>`
+  <div class="bar-row"><span class="name">${c.name}</span>
+  <div class="track" role="img" aria-label="${c.name}: ${c.credits==null?'credits not reported':fmt(c.credits)+' credits'}"><div class="fill" data-w="${c.credits==null?0:(c.credits/maxC*100)}" style="--c:${TOOLS[c.tool].c}"></div></div>
+  <span class="val">${c.credits==null?'not reported':fmt(c.credits)}</span></div>`).join('')
+  + `<div class="legend">${Object.values(TOOLS).map(t=>`<span><i class="dot" style="background:${t.c}"></i>${t.label}</span>`).join('')}</div>`;
+new IntersectionObserver((es,o)=>es.forEach(e=>{if(e.isIntersecting){e.target.querySelectorAll('.fill').forEach(f=>f.style.width=f.dataset.w+'%');o.unobserve(e.target)}}),{threshold:.2}).observe($('#chart'));
+
+/* cards */
+const picks = [];
+let filter='all';
+function frameHTML(c){
+  return `<img src="assets/${c.id}.jpg" alt="" loading="lazy" onerror="this.remove()">
+    <button class="play" aria-label="Play ${c.name}"><span>▶ Play</span></button>`;
 }
+function render(){
+  const s=$('#sort').value;
+  let list=CATS.filter(c=>filter==='all'||c.tool===filter);
+  list.sort({
+    'credits-desc':(a,b)=>(b.credits??-1)-(a.credits??-1),
+    'credits-asc':(a,b)=>(a.credits??1e9)-(b.credits??1e9),
+    'name':(a,b)=>a.name.localeCompare(b.name),
+    'size':(a,b)=>b.kb-a.kb}[s]);
+  const rankOf = id => sorted.findIndex(c=>c.id===id)+1;
+  $('#grid').innerHTML='';
+  list.forEach(c=>{
+    const t=TOOLS[c.tool], el=document.createElement('article');
+    el.className='card'+(picks.includes(c.id)?' picked':''); el.dataset.id=c.id;
+    el.innerHTML=`
+      <div class="frame">${c.id===cheap.id?'<span class="badge-fun">💰 Cheapest</span>':c.id===dear.id?'<span class="badge-fun">💎 Priciest</span>':''}
+        ${c.credits==null?'':`<span class="rank">#${rankOf(c.id)} by cost</span>`}${frameHTML(c)}</div>
+      <div class="meta">
+        <h3>${c.name}</h3><div class="vendor">${c.vendor}</div>
+        <div class="credits"><b>${fmt(c.credits)}</b><span>${c.credits==null?'credits (not reported)':'AI credits'}</span></div>
+        <div class="paws" aria-hidden="true">${paws(c)}</div>
+        <div class="tags"><span class="tag tool" style="--c:${t.c}">${t.label}</span><span class="tag">${c.build}</span><span class="tag">${c.three}</span><span class="tag">${c.kb} KB</span></div>
+        <p class="how">${c.how}</p>
+        <div class="actions">
+          <button class="btn" data-a="stage">Open on stage</button>
+          <a class="btn ghost" style="text-decoration:none" href="${url(c)}" target="_blank" rel="noopener">New tab ↗</a>
+          <label><input type="checkbox" data-a="cmp" ${picks.includes(c.id)?'checked':''}> Compare</label>
+        </div>
+      </div>`;
+    el.querySelector('.play').onclick=()=>play(el,c);
+    el.querySelector('[data-a=stage]').onclick=()=>stage(c);
+    el.querySelector('[data-a=cmp]').onchange=e=>pick(c,e.target.checked,e.target);
+    $('#grid').appendChild(el);
+  });
+}
+function play(el,c){
+  const f=el.querySelector('.frame'); const old=f.querySelector('iframe'); if(old) return;
+  const i=document.createElement('iframe'); i.src=url(c); i.title=c.name; i.allow='fullscreen; autoplay';
+  f.querySelector('.play').hidden=true; f.appendChild(i);
+}
+$('#stopall').onclick=()=>render();
+document.querySelectorAll('#filter button').forEach(b=>b.onclick=()=>{
+  filter=b.dataset.f; document.querySelectorAll('#filter button').forEach(x=>x.setAttribute('aria-pressed',x===b)); render();});
+$('#sort').onchange=render;
+
+/* stage modal */
+const dlg=$('#stage');
+function stage(c){
+  $('#stageTitle').textContent=c.name; const t=TOOLS[c.tool];
+  $('#stageTag').textContent=`${t.label} · ${c.credits==null?'credits n/a':fmt(c.credits)+' credits'}`;
+  $('#stageFrame').src=url(c); dlg.showModal();
+}
+function closeStage(){dlg.close();}
+$('#stageClose').onclick=closeStage;
+dlg.addEventListener('close',()=>{$('#stageFrame').src='about:blank';});
+dlg.addEventListener('click',e=>{if(e.target===dlg)closeStage();});
+
+/* compare */
+function pick(c,on,box){
+  const i=picks.indexOf(c.id);
+  if(on&&i<0){ if(picks.length===2){ picks.shift(); } picks.push(c.id); }
+  if(!on&&i>=0) picks.splice(i,1);
+  document.querySelectorAll('.card').forEach(el=>{
+    const p=picks.includes(el.dataset.id); el.classList.toggle('picked',p); el.querySelector('[data-a=cmp]').checked=p;});
+  drawCompare();
+}
+function drawCompare(){
+  [['A',0],['B',1]].forEach(([k,i])=>{
+    const c=CATS.find(x=>x.id===picks[i]); const body=$('#body'+k), head=$('#cmp'+k);
+    if(!c){head.textContent='Cat '+k; body.innerHTML=`Pick a ${i?'second':'first'} cat`; return;}
+    head.innerHTML=`${c.name} <span class="muted small">· ${TOOLS[c.tool].label} · ${c.credits==null?'credits n/a':fmt(c.credits)+' credits'}</span>`;
+    if(body.dataset.id!==c.id){body.dataset.id=c.id; body.innerHTML=`<iframe src="${url(c)}" title="${c.name}" allow="fullscreen; autoplay"></iframe>`;}
+  });
+  [['A',0],['B',1]].forEach(([k,i])=>{ if(!picks[i]) $('#body'+k).dataset.id=''; });
+  if(picks.length===2) $('#compare').scrollIntoView({behavior:'smooth'});
+}
+
+/* theme */
+$('#theme').onclick=()=>{
+  const r=document.documentElement, n=r.getAttribute('data-theme')==='dark'?'light':'dark';
+  r.setAttribute('data-theme',n); try{localStorage.setItem('cb-theme',n)}catch(e){}
+};
+render();
 </script>
 </body>
 </html>
