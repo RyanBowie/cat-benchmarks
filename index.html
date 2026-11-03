@@ -5,9 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="color-scheme" content="dark light">
 <title>Interactive Cat Benchmarking</title>
-<meta name="description" content="The same one-shot prompt given to eight AI models at maximum reasoning: build a realistic interactive 3D cat in three.js. Watch every cat in action and see scores, AI credit cost, tool and build method.">
+<meta name="description" content="The same one-shot prompt given to nine AI models at maximum reasoning: build a realistic interactive 3D cat in three.js. Watch every cat in action and see scores, AI credit cost, tool and build method.">
 <meta property="og:title" content="Interactive Cat Benchmarking">
-<meta property="og:description" content="Eight models, one prompt, one realistic interactive 3D cat each. Watch them in action, with scores, credit cost and build method.">
+<meta property="og:description" content="Nine models, one prompt, one realistic interactive 3D cat each. Watch them in action, with scores, credit cost and build method.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://ryanbowie.github.io/cat-benchmarks/">
 <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2028%2028'%3E%3Crect%20width='28'%20height='28'%20rx='7'%20fill='%237653ae'/%3E%3Cpath%20d='M7%2021V9l5%204h4l5-4v12z'%20fill='%23fff'/%3E%3C/svg%3E">
@@ -242,7 +242,7 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:12px 28px;justify-content:space-bet
   <section id="cats">
     <div class="wrap">
       <h2>Meet the cats</h2>
-      <p class="sub">Each cat has a short clip recorded from its own page. Hit <b>Launch the live cat</b> to play with the real thing in a new tab (the HTML is in the repo, with sound). Eight live WebGL scenes at once would melt most machines, so clips it is.</p>
+      <p class="sub">Each cat has a short clip recorded from its own page. Hit <b>Launch the live cat</b> to play with the real thing in a new tab (the HTML is in the repo, with sound). Nine live WebGL scenes at once would melt most machines, so clips it is.</p>
       <div class="toolbar">
         <div class="seg" role="group" aria-label="Filter by build tool" id="filter">
           <button aria-pressed="true" data-f="all">All</button>
@@ -345,6 +345,8 @@ const CATS = [
     how:'Delivered from Copilot Cowork as one compact, self-contained page: the leanest and cheapest run of the set.' },
   { id:'gpt-5.6-sol',       name:'GPT-5.6 Sol',       vendor:'OpenAI',    tool:'copilot', credits:201,  kb:50,  build:'Single HTML file', three:'three r170 · CDN',
     how:'The leanest page of the lot, with Miso the cat in about 50 KB.' },
+  { id:'gpt-6-astra',       name:'GPT-6 Astra',       vendor:'OpenAI',    tool:'copilot', credits:832,  kb:621, build:'Vite project → bundled', three:'three · bundled',
+    how:'A Vite and TypeScript project with its own Playwright tests, bundled into one self-contained Miso page.' },
   { id:'gpt-6.1-sol',       name:'GPT-6.1 Sol',       vendor:'OpenAI',    tool:'copilot', credits:179,  kb:622, build:'Vite project → bundled', three:'three · bundled',
     how:'Built as a Vite project (cat, audio, UI modules) and bundled into one file named Miso.' }
 ];
@@ -375,6 +377,7 @@ const SCORES = {
   'gemini-4-argon':    {anatomy:0.9, fur:1.7, face:1.4, anim:2.3, inter:4.5, scene:3.2, perf:2.8},
   'gpt-5.5':           {anatomy:3.0, fur:2.8, face:2.5, anim:3.5, inter:3.5, scene:4.8, perf:5.0},
   'gpt-5.6-sol':       {anatomy:1.2, fur:0.8, face:1.5, anim:2.0, inter:2.4, scene:2.0, perf:3.9},
+  'gpt-6-astra':       {anatomy:5.2, fur:5.0, face:5.0, anim:5.0, inter:5.2, scene:6.2, perf:5.5},
   'gpt-6.1-sol':       {anatomy:5.0, fur:4.8, face:4.6, anim:4.4, inter:4.8, scene:6.0, perf:5.6}
 };
 
