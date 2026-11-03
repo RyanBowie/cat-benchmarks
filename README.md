@@ -6,6 +6,7 @@ An informal, fun benchmark: the same one-shot prompt given to several AI models 
 
 | Model | Tool | Score /10 (provisional) | AI credits |
 |---|---|---|---|
+| Claude Opus 5.5 | GitHub Copilot | 5.7 | 3,309 |
 | Claude Opus 5.5 | Microsoft Cowork | 5.6 | 2,314 |
 | Claude Sonnet 5.5 | GitHub Copilot | 5.5 | 2,175 |
 | GPT-6.1 Sol | GitHub Copilot | 5.0 | 179 |

@@ -5,9 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="color-scheme" content="dark light">
 <title>Interactive Cat Benchmarking</title>
-<meta name="description" content="The same one-shot prompt given to seven AI models at maximum reasoning: build a realistic interactive 3D cat in three.js. Watch every cat in action and see scores, AI credit cost, tool and build method.">
+<meta name="description" content="The same one-shot prompt given to eight AI models at maximum reasoning: build a realistic interactive 3D cat in three.js. Watch every cat in action and see scores, AI credit cost, tool and build method.">
 <meta property="og:title" content="Interactive Cat Benchmarking">
-<meta property="og:description" content="Seven models, one prompt, one realistic interactive 3D cat each. Watch them in action, with scores, credit cost and build method.">
+<meta property="og:description" content="Eight models, one prompt, one realistic interactive 3D cat each. Watch them in action, with scores, credit cost and build method.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://ryanbowie.github.io/cat-benchmarks/">
 <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2028%2028'%3E%3Crect%20width='28'%20height='28'%20rx='7'%20fill='%237653ae'/%3E%3Cpath%20d='M7%2021V9l5%204h4l5-4v12z'%20fill='%23fff'/%3E%3C/svg%3E">
@@ -242,7 +242,7 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:12px 28px;justify-content:space-bet
   <section id="cats">
     <div class="wrap">
       <h2>Meet the cats</h2>
-      <p class="sub">Each cat has a short clip recorded from its own page. Hit <b>Launch the live cat</b> to play with the real thing in a new tab (the HTML is in the repo, with sound). Seven live WebGL scenes at once would melt most machines, so clips it is.</p>
+      <p class="sub">Each cat has a short clip recorded from its own page. Hit <b>Launch the live cat</b> to play with the real thing in a new tab (the HTML is in the repo, with sound). Eight live WebGL scenes at once would melt most machines, so clips it is.</p>
       <div class="toolbar">
         <div class="seg" role="group" aria-label="Filter by build tool" id="filter">
           <button aria-pressed="true" data-f="all">All</button>
@@ -285,7 +285,7 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:12px 28px;justify-content:space-bet
         </div>
         <div class="panel">
           <h3><span class="dot" style="background:var(--cowork)"></span>Microsoft Cowork</h3>
-          <p class="muted">Two cats. Claude Opus 5.5 and GPT-5.5 were tested in Microsoft Cowork rather than the GitHub Copilot app, and each delivered a single self-contained HTML file.</p>
+          <p class="muted">Two cats. Claude Opus 5.5 (Cowork) and GPT-5.5 were tested in Microsoft Cowork rather than the GitHub Copilot app, and each delivered a single self-contained HTML file. Opus 5.5 was also run in GitHub Copilot, so you can compare the two harnesses.</p>
           <div class="flow"><span>Prompt</span><i>→</i><span>Single HTML file</span><i>→</i><span>Done</span></div>
           <p class="small muted">Different harness, different tools, so treat the credit comparison as indicative only.</p>
         </div>
@@ -331,7 +331,9 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:12px 28px;justify-content:space-bet
 const PROMPT = "Using no folder/local file context or previous session context Create a new realistic interactive 3d cat with three.js from scratch.";
 const TOOLS = { copilot:{label:'GitHub Copilot', c:'var(--copilot)'}, cowork:{label:'Microsoft Cowork', c:'var(--cowork)'} };
 const CATS = [
-  { id:'claude-opus-5.5',   name:'Claude Opus 5.5',   vendor:'Anthropic', tool:'cowork',  credits:2314, kb:132, build:'Single HTML file', three:'three r186 · CDN',
+  { id:'claude-opus-5.5-copilot', name:'Claude Opus 5.5 (Copilot)', vendor:'Anthropic', tool:'copilot', credits:3309, kb:105, build:'Modular project → bundled', three:'three r186 · CDN',
+    how:'Built as a modular project (sculpt, rig, coat, materials, scene, behaviour, interaction) and bundled into one file: the priciest run of the set.' },
+  { id:'claude-opus-5.5',   name:'Claude Opus 5.5 (Cowork)',   vendor:'Anthropic', tool:'cowork',  credits:2314, kb:132, build:'Single HTML file', three:'three r186 · CDN',
     how:'Written as one self-contained page and delivered straight from Cowork.' },
   { id:'claude-sonnet-5.5', name:'Claude Sonnet 5.5', vendor:'Anthropic', tool:'copilot', credits:2175, kb:682, build:'Modular project → bundled', three:'three · bundled',
     how:'A real project: SDF body, fur, coat, eyes, rig, behaviour and audio modules, bundled into one file.' },
@@ -366,6 +368,7 @@ const CRITERIA = [
   {k:'perf',    n:'Performance & robustness', w:10, d:'Smooth frame rate, quick load, no errors, works across window sizes.'}
 ];
 const SCORES = {
+  'claude-opus-5.5-copilot': {anatomy:5.8, fur:6.4, face:5.6, anim:5.6, inter:6.0, scene:5.8, perf:4.5},
   'claude-opus-5.5':   {anatomy:5.5, fur:6.0, face:5.4, anim:5.4, inter:6.0, scene:5.6, perf:5.0},
   'claude-sonnet-5.5': {anatomy:5.6, fur:5.2, face:5.6, anim:5.2, inter:5.6, scene:5.8, perf:5.2},
   'grok-4.7':          {anatomy:2.0, fur:1.4, face:2.3, anim:2.6, inter:3.2, scene:2.6, perf:4.1},
