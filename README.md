@@ -9,6 +9,7 @@ An informal, fun benchmark: the same one-shot prompt given to several AI models 
 | Claude Opus 5.5 | GitHub Copilot | 5.7 | 3,309 |
 | Claude Opus 5.5 | Microsoft Cowork | 5.6 | 2,314 |
 | Claude Sonnet 5.5 | GitHub Copilot | 5.5 | 2,175 |
+| Fable 5.2 | GitHub Copilot | 5.4 | ~$11 (not in credits) |
 | GPT-6 Astra | GitHub Copilot | 5.3 | 832 |
 | GPT-6.1 Sol | GitHub Copilot | 5.0 | 179 |
 | Fable 5.2 | GitHub Copilot | 5.4 | ~$11 (not in credits) |
