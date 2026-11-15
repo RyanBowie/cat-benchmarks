@@ -13,6 +13,7 @@ An informal, fun benchmark: the same one-shot prompt given to several AI models 
 | GPT-6 Astra | GitHub Copilot | 5.3 | 832 |
 | GPT-6.1 Sol | GitHub Copilot | 5.0 | 179 |
 | Fable 5.2 | GitHub Copilot | 5.4 | ~$11 (not in credits) |
+| Gemini 4 Carbon | GitHub Copilot | 3.9 | 658 |
 | GPT-5.5 | Microsoft Cowork | 3.5 | 105 |
 | Grok 4.7 | GitHub Copilot | 2.5 | 848 |
 | Gemini 4 Argon | GitHub Copilot | 2.2 | 252 |

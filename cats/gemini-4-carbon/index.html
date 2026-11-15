@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Realistic Interactive 3D Cat — Three.js</title>
+  <link rel="stylesheet" href="./src/style.css" />
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@0.187.0/build/three.module.js",
+        "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.187.0/examples/jsm/"
+      }
+    }
+  </script>
+</head>
+<body>
+  <div id="canvas-container"></div>
+
+  <!-- Top-left live feline mood & bio-status HUD -->
+  <header class="hud-top-left">
+    <div class="brand-row">
+      <span class="live-dot" id="purr-dot"></span>
+      <h1>Interactive 3D Cat</h1>
+      <span class="badge">Three.js • GPU Shell Fur</span>
+    </div>
+    <p class="mood-status" id="mood-status">Curious • Watching attentively</p>
+    <div class="purr-meter-wrap" title="Feline Happiness & 26 Hz Purr Resonance">
+      <span class="purr-label">Purr</span>
+      <div class="purr-bar-track">
+        <div class="purr-bar-fill" id="purr-bar-fill"></div>
+      </div>
+    </div>
+    <p class="hint-line" id="interaction-hint">
+      Drag on cat to pet chin, head &amp; back • Click nose to boop • Click rug to call over • Drag outside to orbit
+    </p>
+  </header>
+
+  <!-- Top-right quick utility buttons -->
+  <div class="hud-top-right">
+    <button class="icon-btn" id="btn-audio" title="Toggle Bio-Acoustic Purr & Meow Audio">
+      🔊 Sound On
+    </button>
+    <button class="icon-btn" id="btn-toggle-panel" title="Toggle Studio Drawer">
+      ⚙️ Customize
+    </button>
+  </div>
+
+  <!-- Collapsible Right Studio Customization Drawer -->
+  <aside class="studio-drawer" id="studio-drawer">
+    <section class="drawer-section">
+      <h2>Coat Genetics</h2>
+      <div class="coat-grid" id="coat-grid"></div>
+    </section>
+
+    <section class="drawer-section">
+      <h2>Iris Pigmentation</h2>
+      <div class="chip-row" id="eye-grid"></div>
+    </section>
+
+    <section class="drawer-section">
+      <h2>Coat &amp; Optics</h2>
+      <label class="slider-row">
+        <span>Fur Plushness</span>
+        <input type="range" id="slider-fur" min="0.55" max="1.45" step="0.05" value="1.00" />
+      </label>
+      <label class="slider-row">
+        <span>Pupil Slit ↔ Dilated</span>
+        <input type="range" id="slider-pupil" min="0" max="0.82" step="0.02" value="0" />
+        <small id="pupil-mode-label">Auto</small>
+      </label>
+      <label class="toggle-row">
+        <input type="checkbox" id="chk-collar" checked />
+        <span>Leather Collar &amp; Brass Bell</span>
+      </label>
+    </section>
+
+    <section class="drawer-section">
+      <h2>Lighting Mood</h2>
+      <div class="chip-row" id="lighting-grid"></div>
+    </section>
+
+    <section class="drawer-section">
+      <h2>Camera Framing</h2>
+      <div class="chip-row" id="camera-grid">
+        <button class="chip active" data-cam="studio">3/4 Studio</button>
+        <button class="chip" data-cam="portrait">Face Portrait</button>
+        <button class="chip" data-cam="eyes">Eye Macro</button>
+        <button class="chip" data-cam="profile">Side Profile</button>
+        <button class="chip" data-cam="beans">Low / Paws</button>
+      </div>
+    </section>
+  </aside>
+
+  <!-- Bottom Interactive Toys & Behavior Dock -->
+  <nav class="bottom-dock">
+    <div class="dock-row tools-row">
+      <button class="tool-btn active" id="tool-pet" data-tool="pet">
+        🖐️ Pet &amp; Call
+      </button>
+      <button class="tool-btn" id="tool-laser" data-tool="laser">
+        🔴 Laser Pointer
+      </button>
+      <button class="action-btn" id="btn-yarn">
+        🧶 Toss Yarn
+      </button>
+      <button class="action-btn" id="btn-treat">
+        🐟 Drop Treat
+      </button>
+      <button class="action-btn accent" id="btn-meow">
+        😺 Meow!
+      </button>
+    </div>
+
+    <div class="dock-row poses-row" id="pose-row">
+      <span class="row-label">Behaviors:</span>
+      <button class="pose-chip active" data-pose="idle">Stand</button>
+      <button class="pose-chip" data-pose="sit">Sit</button>
+      <button class="pose-chip" data-pose="walk_roam">Stroll</button>
+      <button class="pose-chip" data-pose="stretch">Big Stretch</button>
+      <button class="pose-chip" data-pose="groom">Groom Paw</button>
+      <button class="pose-chip" data-pose="knead">Make Biscuits</button>
+      <button class="pose-chip" data-pose="sleep">Curl &amp; Nap</button>
+    </div>
+  </nav>
+
+  <script type="module" src="./src/main.js"></script>
+</body>
+</html>
