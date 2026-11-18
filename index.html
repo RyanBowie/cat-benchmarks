@@ -114,15 +114,7 @@ select{font:inherit;font-size:.85rem;color:var(--text);background:var(--surface)
 @media(max-width:560px){.bar-row{grid-template-columns:100px 1fr 64px}}
 
 /* scoring */
-.lb{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:repeat(var(--rows,7),auto);grid-auto-flow:column;gap:6px 14px}
-.lb-key{display:flex;gap:16px;font-size:.8rem;color:var(--muted);margin:0 0 10px}.lb-key span{display:flex;align-items:center;gap:6px}.lb-key i{width:8px;height:8px;border-radius:50%;background:var(--c)}
-.lb-row{display:grid;grid-template-columns:22px minmax(0,1.4fr) minmax(50px,1fr) 34px;gap:10px;align-items:center;background:var(--surface);border:1px solid var(--border);border-radius:9px;padding:6px 12px;text-decoration:none;color:var(--text)}
-.lb-row:hover{border-color:var(--accent)}
-.lb-rank{font-weight:800;font-size:.9rem;color:var(--accent);text-align:center}
-.lb-name{display:flex;align-items:center;gap:7px;min-width:0}.lb-name b{font-size:.9rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.lb-name i{flex:none;width:8px;height:8px;border-radius:50%;background:var(--c)}
-.lb-bar{height:6px;background:var(--soft);border-radius:999px;overflow:hidden}
-.lb-bar i{display:block;height:100%;width:0;border-radius:999px;background:linear-gradient(90deg,color-mix(in srgb,var(--c) 55%,transparent),var(--c));transition:width 1s cubic-bezier(.2,.8,.2,1)}
-.lb-score{font-weight:800;font-size:.95rem;text-align:right;font-variant-numeric:tabular-nums}
+.heat-link{color:var(--text);text-decoration:none;border-bottom:1px dashed var(--muted)}.heat-link:hover{color:var(--accent);border-color:var(--accent)}
 .heat-wrap{overflow-x:auto;margin-top:22px;border:1px solid var(--border);border-radius:14px;background:var(--surface)}
 .heat{border-collapse:collapse;width:100%;min-width:760px;font-size:.88rem}
 .heat th,.heat td{padding:9px 10px;text-align:center;border-bottom:1px solid var(--border)}
@@ -140,7 +132,7 @@ select{font:inherit;font-size:.85rem;color:var(--text);background:var(--surface)
 .scorepill{display:inline-flex;align-items:baseline;gap:4px;font-weight:800;color:var(--accent)}
 .scorepill small{font-weight:500;color:var(--muted)}
 .note{font-size:.84rem;color:var(--muted);margin-top:14px;border-left:3px solid var(--accent);padding-left:12px}
-@media(max-width:820px){.lb{grid-template-columns:1fr;grid-template-rows:none;grid-auto-flow:row}}
+
 
 /* cat cards */
 .grid{display:grid;gap:40px}
@@ -230,8 +222,8 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:12px 28px;justify-content:space-bet
   <section id="scores">
     <div class="wrap">
       <h2>The scoreboard</h2>
-      <p class="sub">Each cat is scored 0–10 across seven weighted criteria. Scoring is deliberately harsh and nothing has reached 7 yet, and a 10 would be a cat you could mistake for a live one on a screen. Click a row to jump to that cat.</p>
-      <div class="lb-key" id="lbkey"></div><div class="lb" id="lb"></div>
+      <p class="sub">Each cat is scored 0–10 across seven weighted criteria. Scoring is deliberately harsh and nothing has reached 7 yet, and a 10 would be a cat you could mistake for a live one on a screen. Click a model to jump to its cat.</p>
+      
       <div class="heat-wrap"><table class="heat" id="heat"></table></div>
       <div class="scale"><span><b>0–2</b> missing or broken</span><span><b>3–4</b> crude</span><span><b>5–6</b> recognisably a cat</span><span><b>7–10</b> convincing to near-photoreal (not reached yet)</span></div>
       <h3 style="margin:30px 0 0">The matrix</h3>
@@ -399,17 +391,8 @@ const ranked = CATS.map(c=>({...c, sc:SCORES[c.id], total:CRITERIA.reduce((a,x)=
 const rankScore = id => ranked.findIndex(c=>c.id===id)+1;
 const totalOf = id => ranked.find(c=>c.id===id).total;
 
-/* scoreboard */
-$('#lb').innerHTML = ranked.map((c,i)=>`
-  <a class="lb-row" href="#cat-${c.id}"><span class="lb-rank">${i+1}</span>
-  <span class="lb-name" title="${TOOLS[c.tool].label}"><i style="--c:${TOOLS[c.tool].c}"></i><b>${c.name}</b></span>
-  <span class="lb-bar"><i data-w="${c.total*10}" style="--c:${TOOLS[c.tool].c}"></i></span>
-  <span class="lb-score">${c.total.toFixed(1)}</span></a>`).join('');
-$('#lb').style.setProperty('--rows',Math.ceil(ranked.length/2));
-$('#lbkey').innerHTML=[...new Set(ranked.map(c=>c.tool))].map(k=>`<span><i style="--c:${TOOLS[k].c}"></i>${TOOLS[k].label}</span>`).join('');
-new IntersectionObserver((es,o)=>es.forEach(e=>{if(e.isIntersecting){e.target.querySelectorAll('.lb-bar i').forEach(f=>f.style.width=f.dataset.w+'%');o.unobserve(e.target)}}),{threshold:.2}).observe($('#lb'));
 $('#heat').innerHTML = `<thead><tr><th>Model</th>${CRITERIA.map(x=>`<th>${x.n}<small>${x.w}%</small></th>`).join('')}<th>Overall</th><th>Credits</th></tr></thead><tbody>`
-  + ranked.map(c=>`<tr><td>${c.name}</td>${CRITERIA.map(x=>`<td class="v" style="--p:${c.sc[x.k]*6}">${c.sc[x.k].toFixed(1)}</td>`).join('')}<td><b>${c.total.toFixed(1)}</b></td><td>${fmt(c.credits)}</td></tr>`).join('') + '</tbody>';
+  + ranked.map(c=>`<tr><td><a class="heat-link" href="#cat-${c.id}">${c.name}</a></td>${CRITERIA.map(x=>`<td class="v" style="--p:${c.sc[x.k]*6}">${c.sc[x.k].toFixed(1)}</td>`).join('')}<td><b>${c.total.toFixed(1)}</b></td><td>${fmt(c.credits)}</td></tr>`).join('') + '</tbody>';
 $('#rubric').innerHTML = CRITERIA.map(x=>`<div class="r"><b>${x.n}<em>${x.w}%</em></b><p>${x.d}</p></div>`).join('');
 
 /* typed prompt */
