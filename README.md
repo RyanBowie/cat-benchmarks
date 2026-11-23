@@ -16,6 +16,7 @@ An informal, fun benchmark: the same one-shot prompt given to several AI models 
 | GPT-6.1 Sol | GitHub Copilot | 5.0 | 179 |
 | Gemini 4 Carbon | GitHub Copilot | 3.9 | 658 |
 | GPT-5.5 | Microsoft Cowork | 3.5 | 105 |
+| Gemini 4 Neon | GitHub Copilot | 3.4 | 501 |
 | Grok 4.7 | GitHub Copilot | 2.5 | 848 |
 | Gemini 4 Argon | GitHub Copilot | 2.2 | 252 |
 | GPT-5.6 Sol | GitHub Copilot | 1.8 | 201 |

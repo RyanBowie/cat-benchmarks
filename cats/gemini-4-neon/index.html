@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Velvet — Realistic Interactive 3D Cat</title>
+    <link
+      rel="icon"
+      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><text y='50' font-size='50'>🐱</text></svg>"
+    />
+    <script type="module" crossorigin src="./assets/index-l6MDYoQN.js"></script>
+    <link rel="stylesheet" crossorigin href="./assets/index-4DibHMHP.css">
+  </head>
+  <body>
+    <canvas id="scene-canvas"></canvas>
+
+    <!-- Subtle top-left status & mood badge -->
+    <header class="top-bar">
+      <div class="brand-pill">
+        <span class="mood-emoji" id="mood-emoji">😺</span>
+        <div class="brand-text">
+          <div class="brand-title">Velvet</div>
+          <div class="brand-sub" id="mood-label">Content · Stroke to pet</div>
+        </div>
+        <div class="affection-bar" title="Affection">
+          <div class="affection-fill" id="affection-fill"></div>
+        </div>
+      </div>
+
+      <div class="top-actions">
+        <button class="icon-btn" id="btn-cam-face" title="Close-up Portrait">Face</button>
+        <button class="icon-btn" id="btn-cam-full" title="Full View">Room</button>
+        <button class="icon-btn" id="btn-mute" title="Toggle Purr & Meow Audio">🔊</button>
+        <button class="icon-btn" id="btn-toggle-hud" title="Hide / Show Controls">▾</button>
+      </div>
+    </header>
+
+    <!-- Gentle ephemeral interaction hint -->
+    <div class="toast-hint" id="toast-hint">
+      Stroke head, chin, or back to purr · Click nose to boop · Drag room to orbit
+    </div>
+
+    <!-- Bottom floating glassmorphic control dock -->
+    <footer class="hud-dock" id="hud-dock">
+      <div class="dock-row">
+        <div class="dock-group">
+          <span class="group-label">Interact</span>
+          <div class="pill-strip" id="mode-strip">
+            <button class="pill active" data-mode="pet">✋ Pet</button>
+            <button class="pill" data-mode="laser">🔴 Laser</button>
+            <button class="pill" data-mode="feather">🪶 Feather</button>
+            <button class="pill" data-mode="treat">🐟 Treat</button>
+            <button class="pill" data-mode="yarn">🧶 Yarn</button>
+          </div>
+        </div>
+
+        <div class="dock-divider"></div>
+
+        <div class="dock-group">
+          <span class="group-label">Pose</span>
+          <div class="pill-strip" id="pose-strip">
+            <button class="pill active" data-pose="sit">Sit</button>
+            <button class="pill" data-pose="stand">Stand</button>
+            <button class="pill" data-pose="walk">Walk</button>
+            <button class="pill" data-pose="stretch">Stretch</button>
+            <button class="pill" data-pose="groom">Groom</button>
+            <button class="pill" data-pose="loaf">Loaf</button>
+            <button class="pill" data-pose="sleep">Nap</button>
+            <button class="pill accent" id="btn-meow">Meow</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="dock-row secondary">
+        <div class="dock-group">
+          <span class="group-label">Coat</span>
+          <div class="swatch-strip" id="breed-strip">
+            <button class="swatch active" data-breed="ginger" title="Ginger Tabby">
+              <span class="dot" style="background: linear-gradient(135deg, #e0863e, #9f4616)"></span>
+              Ginger
+            </button>
+            <button class="swatch" data-breed="silver" title="Silver Tabby">
+              <span class="dot" style="background: linear-gradient(135deg, #b5b9be, #3e4148)"></span>
+              Silver
+            </button>
+            <button class="swatch" data-breed="tuxedo" title="Tuxedo">
+              <span class="dot" style="background: linear-gradient(135deg, #22252c 55%, #f5f3ee 55%)"></span>
+              Tuxedo
+            </button>
+            <button class="swatch" data-breed="siamese" title="Seal Point Siamese">
+              <span class="dot" style="background: linear-gradient(135deg, #e8dac2 55%, #3d2a20 55%)"></span>
+              Siamese
+            </button>
+            <button class="swatch" data-breed="calico" title="Calico">
+              <span class="dot" style="background: conic-gradient(#f5f0e8 0 130deg, #d86e2a 130deg 250deg, #2d292b 250deg)"></span>
+              Calico
+            </button>
+          </div>
+        </div>
+
+        <div class="dock-divider"></div>
+
+        <div class="dock-group">
+          <span class="group-label">Light</span>
+          <div class="pill-strip" id="light-strip">
+            <button class="pill active" data-light="morning">☀️ Morning</button>
+            <button class="pill" data-light="golden">🌇 Golden</button>
+            <button class="pill" data-light="dusk">🌙 Dusk</button>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+  </body>
+</html>

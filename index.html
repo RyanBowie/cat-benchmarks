@@ -5,9 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="color-scheme" content="dark light">
 <title>Interactive Cat Benchmarking</title>
-<meta name="description" content="The same one-shot prompt given to thirteen AI models at maximum reasoning: build a realistic interactive 3D cat in three.js. Watch every cat in action and see scores, AI credit cost, tool and build method.">
+<meta name="description" content="The same one-shot prompt given to fourteen AI models at maximum reasoning: build a realistic interactive 3D cat in three.js. Watch every cat in action and see scores, AI credit cost, tool and build method.">
 <meta property="og:title" content="Interactive Cat Benchmarking">
-<meta property="og:description" content="Thirteen models, one prompt, one realistic interactive 3D cat each. Watch them in action, with scores, credit cost and build method.">
+<meta property="og:description" content="Fourteen models, one prompt, one realistic interactive 3D cat each. Watch them in action, with scores, credit cost and build method.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://ryanbowie.github.io/cat-benchmarks/">
 <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2028%2028'%3E%3Crect%20width='28'%20height='28'%20rx='7'%20fill='%237653ae'/%3E%3Cpath%20d='M7%2021V9l5%204h4l5-4v12z'%20fill='%23fff'/%3E%3C/svg%3E">
@@ -235,7 +235,7 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:12px 28px;justify-content:space-bet
   <section id="cats">
     <div class="wrap">
       <h2>Meet the cats</h2>
-      <p class="sub">Each cat has a short clip recorded from its own page. Hit <b>Launch the live cat</b> to play with the real thing in a new tab (the HTML is in the repo, with sound). Thirteen live WebGL scenes at once would melt most machines, so clips it is.</p>
+      <p class="sub">Each cat has a short clip recorded from its own page. Hit <b>Launch the live cat</b> to play with the real thing in a new tab (the HTML is in the repo, with sound). Fourteen live WebGL scenes at once would melt most machines, so clips it is.</p>
       <div class="toolbar">
         <div class="seg" role="group" aria-label="Filter by build tool" id="filter">
           <button aria-pressed="true" data-f="all">All</button>
@@ -346,6 +346,8 @@ const CATS = [
     how:'Bramble: a fully bundled single-file cat with fur shells, a feather toy the eyes track, petting with a slow blink, and full-body and portrait cameras.' },
   { id:'gpt-6.2-sol',       name:'GPT-6.2 Sol',       vendor:'OpenAI',    tool:'copilot', credits:161,  kb:1191, build:'Single file (bundled)', three:'three bundled inline',
     how:'Miso: a fluffy orange tabby in a single bundled file with fur, a slow blink, a feather toy the eyes follow, and orbit and zoom. Very cheap for the quality.' },
+  { id:'gemini-4-neon',     name:'Gemini 4 Neon',     vendor:'Google',    tool:'copilot', credits:501,  kb:625, build:'Vite project → bundled', three:'three bundled (Vite)',
+    how:'Velvet: a Vite project with fur shaders, five coats, five toys, eight poses and three lighting moods in a furnished room. Lots of features, but stilt-like legs and the "sit" pose still standing.' },
   { id:'gemini-4-carbon',   name:'Gemini 4 Carbon',   vendor:'Google',    tool:'copilot', credits:658,  kb:230, build:'ES-module project', three:'three r187 · CDN',
     how:'A multi-module project (anatomy, animator, fur and eye shaders, environment, audio) with the richest set of controls in the set.' },
   { id:'gpt-6.1-sol',       name:'GPT-6.1 Sol',       vendor:'OpenAI',    tool:'copilot', credits:179,  kb:622, build:'Vite project → bundled', three:'three · bundled',
@@ -382,6 +384,7 @@ const SCORES = {
   'fable-5.2':         {anatomy:5.7, fur:6.1, face:5.5, anim:5.5, inter:5.1, scene:5.5, perf:5.1},
   'gpt-6.2-astra':     {anatomy:5.5, fur:6.2, face:5.5, anim:5.0, inter:4.5, scene:5.5, perf:5.5},
   'gpt-6.2-sol':       {anatomy:5.3, fur:6.3, face:5.3, anim:4.8, inter:4.3, scene:5.3, perf:5.3},
+  'gemini-4-neon':     {anatomy:1.8, fur:3.8, face:3.6, anim:3.0, inter:5.0, scene:5.2, perf:3.2},
   'gemini-4-carbon':   {anatomy:2.8, fur:3.6, face:3.0, anim:4.4, inter:6.0, scene:4.6, perf:3.2},
   'gpt-6.1-sol':       {anatomy:5.0, fur:4.8, face:4.6, anim:4.4, inter:4.8, scene:6.0, perf:5.6}
 };
